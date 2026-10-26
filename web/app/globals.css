@@ -39,8 +39,21 @@
  *
  * RÈGLE À NE JAMAIS CASSER : aucun composant n'écrit un code hexadécimal
  * (#4FD8FF…) en dur. Tout passe par ces noms.
+ *
+ * POURQUOI « static » ?
+ *
+ * Par défaut, Tailwind 4 fait le ménage : il ne garde dans le CSS livré que
+ * les jetons qu'il a VUS utilisés en parcourant le code source. Or plusieurs
+ * de nos couleurs ne sont jamais écrites en clair — Card.tsx construit
+ * var(--color-cyan) pendant l'exécution, et les icônes feront pareil.
+ * Tailwind ne peut pas le deviner, il les supprimait donc, et toutes les
+ * cartes retombaient sur la couleur de secours (ambre).
+ *
+ * « static » lui demande de toujours tout émettre. Le coût est négligeable
+ * (une douzaine de lignes de CSS) et la règle devient simple : un jeton
+ * déclaré ici existe toujours, qu'on l'appelle par une classe ou par calcul.
  * -------------------------------------------------------------------------- */
-@theme {
+@theme static {
   /* --- Neutres : fond, cartes et textes --- */
   --color-bg: #000000; /* fond de l'écran, noir pur */
   --color-card: #0a0a0f; /* fond des cartes (à utiliser en /78) */
@@ -89,4 +102,65 @@ body {
 
   cursor: none; /* pas de flèche de souris visible sur le miroir */
   user-select: none; /* impossible de sélectionner du texte par accident */
+}
+
+/* --------------------------------------------------------------------------
+ * 4. L'apparence des cartes — utilisée par components/ui/Card.tsx
+ *
+ * POURQUOI DU CSS ICI, ALORS QUE TOUT LE RESTE EST EN TAILWIND ?
+ *
+ * Une carte peut prendre cinq couleurs différentes. En Tailwind, il faudrait
+ * écrire les cinq variantes en clair (border-cyan/25, border-coral/25…),
+ * parce que Tailwind lit le code source comme du texte AVANT l'exécution :
+ * une classe fabriquée par calcul n'existerait jamais. Cela ferait quinze
+ * combinaisons à maintenir pour trois états.
+ *
+ * À la place, Card.tsx pose une variable CSS --tone sur la carte, et les
+ * règles ci-dessous la lisent. L'apparence est donc écrite UNE fois et
+ * s'adapte à la couleur reçue.
+ *
+ * color-mix(in srgb, X 25%, transparent) = « la couleur X, à 25 % d'opacité ».
+ * On en a besoin parce que --tone est une variable : la notation courte de
+ * Tailwind (cyan/25) ne s'applique qu'à des couleurs connues à l'avance.
+ *
+ * var(--tone, var(--color-amber)) = « --tone, ou amber si --tone est absente ».
+ * Un filet de sécurité : une carte mal utilisée reste visible.
+ * -------------------------------------------------------------------------- */
+@layer components {
+  .card {
+    /* Les valeurs du brief : fond « card » à 78 %, bordure du ton à 25 %,
+     * rayon au milieu de la fourchette 27–33 px annoncée en section 4. */
+    background-color: color-mix(in srgb, var(--color-card) 78%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--tone, var(--color-amber)) 25%, transparent);
+    border-radius: 30px;
+
+    /* Espace intérieur. Le brief ne le fixe pas : valeur choisie au milieu de
+     * la fourchette d'espacement des blocs (33–39 px), à ajuster à la relecture
+     * visuelle de la tâche 10 si les cartes paraissent trop serrées. */
+    padding: 36px;
+  }
+
+  /* Carte mise en avant : le fond prend la teinte du ton, la bordure épaissit.
+   * Les pourcentages de teinte et de bordure ne sont pas donnés par le brief,
+   * ils sont choisis ici — un seul endroit à régler si le rendu déçoit. */
+  .card--tinted {
+    background-color: color-mix(
+      in srgb,
+      var(--tone, var(--color-amber)) 12%,
+      transparent
+    );
+    border-width: 1.5px;
+    border-color: color-mix(
+      in srgb,
+      var(--tone, var(--color-amber)) 45%,
+      transparent
+    );
+  }
+
+  /* La lueur de l'alerte, telle que décrite par le brief : 14 px, ton à 35 %. */
+  .card--alert {
+    box-shadow: 0 0 14px
+      color-mix(in srgb, var(--tone, var(--color-amber)) 35%, transparent);
+  }
 }
