@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — brief section 4.
+ * Components must never hard-code a hex value: use these tokens only.
+ * Tailwind v4 keeps the theme in CSS, so there is no tailwind.config.ts.
+ */
+@theme {
+  --color-bg: #000000;
+  --color-card: #0a0a0f;
+  --color-ink: #f5f5fa;
+  --color-muted: #c4c4d0;
+  --color-label: #b4b4c2;
+
+  --color-amber: #ffb347;
+  --color-cyan: #4fd8ff;
+  --color-magenta: #ff4fd8;
+  --color-neon-green: #4dff9a;
+  --color-coral: #ff8a4c;
+  --color-moon: #ffe8a3;
+  --color-cloud: #f5f5fa;
+
+  --font-sans: var(--font-outfit);
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  color-scheme: dark;
+}
+
+/* Kiosk screen: nothing scrolls, no cursor, no text selection. */
+body {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  cursor: none;
+  user-select: none;
+}
