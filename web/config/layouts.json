@@ -1,0 +1,87 @@
+[
+  {
+    "mode": "morning",
+    "widgets": [
+      { "id": "clock-1", "type": "clock", "area": "header-left" },
+      { "id": "weather-1", "type": "weather", "area": "header-right" },
+      { "id": "greeting-1", "type": "greeting", "area": "main" },
+      { "id": "clock-2", "type": "clock", "area": "main" },
+      {
+        "id": "priorities-1",
+        "type": "priorities",
+        "area": "main",
+        "settings": { "max": 3 }
+      },
+      { "id": "transport-1", "type": "transport", "area": "main" },
+      { "id": "habits-1", "type": "habits", "area": "main" },
+      {
+        "id": "footer-1",
+        "type": "footer",
+        "area": "footer",
+        "settings": { "left": "Mode matin", "right": "Mis à jour à {heure}" }
+      }
+    ]
+  },
+  {
+    "mode": "evening",
+    "widgets": [
+      {
+        "id": "clock-1",
+        "type": "clock",
+        "area": "header-left",
+        "settings": { "showMoon": true }
+      },
+      {
+        "id": "weather-tomorrow-1",
+        "type": "weatherTomorrow",
+        "area": "header-right"
+      },
+      { "id": "alert-1", "type": "alert", "area": "main" },
+      { "id": "daily-review-1", "type": "dailyReview", "area": "main" },
+      {
+        "id": "agenda-1",
+        "type": "agenda",
+        "area": "main",
+        "settings": { "max": 4 }
+      },
+      { "id": "menu-1", "type": "menu", "area": "main" },
+      { "id": "message-1", "type": "message", "area": "main" },
+      {
+        "id": "footer-1",
+        "type": "footer",
+        "area": "footer",
+        "settings": {
+          "left": "Bonne soirée {prenom}",
+          "right": "Extinction auto à 23 h"
+        }
+      }
+    ]
+  },
+  {
+    "mode": "weekend",
+    "widgets": [
+      { "id": "clock-1", "type": "clock", "area": "header-left" },
+      {
+        "id": "weather-weekend-1",
+        "type": "weatherWeekend",
+        "area": "header-right"
+      },
+      { "id": "weekend-banner-1", "type": "weekendBanner", "area": "main" },
+      {
+        "id": "shopping-1",
+        "type": "shopping",
+        "area": "main",
+        "settings": { "max": 10 }
+      },
+      { "id": "chores-1", "type": "chores", "area": "main" },
+      { "id": "weekend-events-1", "type": "weekendEvents", "area": "main" },
+      { "id": "photo-1", "type": "photo", "area": "main" },
+      {
+        "id": "footer-1",
+        "type": "footer",
+        "area": "footer",
+        "settings": { "left": "Vue foyer", "right": "Bilan de la semaine" }
+      }
+    ]
+  }
+]

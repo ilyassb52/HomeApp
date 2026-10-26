@@ -37,12 +37,13 @@ import { useEffect, useState, type ReactNode } from "react";
 /* --------------------------------------------------------------------------
  * 1. La taille du miroir
  *
- * Exportées, car d'autres fichiers en auront besoin : la tâche 3 vérifie que
- * la pile de widgets ne dépasse pas FRAME_HEIGHT. Une valeur utilisée à deux
- * endroits devient une constante nommée — jamais un nombre recopié.
+ * Ces trois nombres ne sortent pas de ce fichier : c'est précisément ce qui
+ * permet au reste du projet de les ignorer. Les nommer plutôt que les
+ * recopier évite d'avoir à chercher « 1920 » partout le jour où l'écran
+ * change de modèle.
  * -------------------------------------------------------------------------- */
-export const FRAME_WIDTH = 1080;
-export const FRAME_HEIGHT = 1920;
+const FRAME_WIDTH = 1080;
+const FRAME_HEIGHT = 1920;
 
 /** Marge extérieure de l'écran, en pixels du cadre (section 4 du brief). */
 const FRAME_PADDING = 72;
