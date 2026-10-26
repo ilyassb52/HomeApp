@@ -1,41 +1,92 @@
+/* ==========================================================================
+ * globals.css — la seule feuille de style globale du projet
+ *
+ * Elle fait trois choses, dans l'ordre :
+ *   1. charger Tailwind ;
+ *   2. déclarer les « jetons » de design (couleurs, police) ;
+ *   3. poser les règles de la page entière (fond noir, pas de défilement…).
+ *
+ * Un « jeton » (design token) est une valeur nommée une fois ici, puis
+ * réutilisée partout ailleurs par son nom. Exemple : au lieu d'écrire
+ * #4FD8FF dans dix composants, on écrit une seule fois --color-cyan ici,
+ * et les composants disent « cyan ». Si la couleur change un jour, il n'y a
+ * qu'un seul endroit à modifier.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * 1. Tailwind
+ *
+ * Cette ligne importe tout Tailwind. En version 4, Tailwind se configure
+ * directement en CSS (le bloc @theme ci-dessous) : il n'y a plus de fichier
+ * tailwind.config.ts comme en version 3. C'est le cas prévu par la « note
+ * Tailwind » de la section 4 du brief.
+ * -------------------------------------------------------------------------- */
 @import "tailwindcss";
 
-/*
- * Design tokens — brief section 4.
- * Components must never hard-code a hex value: use these tokens only.
- * Tailwind v4 keeps the theme in CSS, so there is no tailwind.config.ts.
- */
+/* --------------------------------------------------------------------------
+ * 2. Jetons de design — section 4 du brief
+ *
+ * Chaque --color-X déclaré ici devient automatiquement utilisable dans les
+ * composants sous forme de classes Tailwind :
+ *
+ *   --color-bg     ->  bg-bg        (couleur de fond)
+ *   --color-ink    ->  text-ink     (couleur de texte)
+ *   --color-cyan   ->  border-cyan  (couleur de bordure)
+ *
+ * On peut y ajouter une opacité avec une barre oblique :
+ *   border-cyan/25  =  bordure cyan à 25 % d'opacité
+ *   bg-card/78      =  fond de carte à 78 % d'opacité (la valeur du brief)
+ *
+ * RÈGLE À NE JAMAIS CASSER : aucun composant n'écrit un code hexadécimal
+ * (#4FD8FF…) en dur. Tout passe par ces noms.
+ * -------------------------------------------------------------------------- */
 @theme {
-  --color-bg: #000000;
-  --color-card: #0a0a0f;
-  --color-ink: #f5f5fa;
-  --color-muted: #c4c4d0;
-  --color-label: #b4b4c2;
+  /* --- Neutres : fond, cartes et textes --- */
+  --color-bg: #000000; /* fond de l'écran, noir pur */
+  --color-card: #0a0a0f; /* fond des cartes (à utiliser en /78) */
+  --color-ink: #f5f5fa; /* texte principal */
+  --color-muted: #c4c4d0; /* texte secondaire */
+  --color-label: #b4b4c2; /* petits titres de section */
 
-  --color-amber: #ffb347;
-  --color-cyan: #4fd8ff;
-  --color-magenta: #ff4fd8;
-  --color-neon-green: #4dff9a;
-  --color-coral: #ff8a4c;
-  --color-moon: #ffe8a3;
-  --color-cloud: #f5f5fa;
+  /* --- Couleurs néon : une par thème, voir le tableau du brief --- */
+  --color-amber: #ffb347; /* alertes, soleil, accent par défaut */
+  --color-cyan: #4fd8ff; /* travail, pluie, profil 1 */
+  --color-magenta: #ff4fd8; /* apprentissage, messages, profil 2 */
+  --color-neon-green: #4dff9a; /* fait, réussi, courses, profil 3 */
+  --color-coral: #ff8a4c; /* sport, repas */
+  --color-moon: #ffe8a3; /* lune */
+  --color-cloud: #f5f5fa; /* nuages */
 
+  /* --- Police ---
+   * --font-outfit est fabriquée par app/layout.tsx (voir ce fichier).
+   * On la branche ici sur --font-sans, la police par défaut de Tailwind,
+   * pour que tout le site l'utilise sans avoir à le préciser. */
   --font-sans: var(--font-outfit);
 }
 
+/* --------------------------------------------------------------------------
+ * 3. La page entière
+ *
+ * Ces règles valent pour tout l'écran, pas pour un composant en particulier.
+ * Elles traduisent une contrainte physique : l'écran est posé derrière un
+ * miroir sans tain, personne ne le touche et il n'y a ni souris ni clavier.
+ * -------------------------------------------------------------------------- */
 html {
   height: 100%;
-  overflow: hidden;
-  color-scheme: dark;
+  overflow: hidden; /* aucune barre de défilement, jamais (section 10) */
+  color-scheme: dark; /* évite un éclair blanc du navigateur au chargement */
 }
 
-/* Kiosk screen: nothing scrolls, no cursor, no text selection. */
 body {
   height: 100%;
   overflow: hidden;
+
+  /* var(--color-bg) = le jeton déclaré plus haut. En CSS brut on écrit
+   * var(--nom) ; dans un composant React on écrirait la classe bg-bg. */
   background-color: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  cursor: none;
-  user-select: none;
+
+  cursor: none; /* pas de flèche de souris visible sur le miroir */
+  user-select: none; /* impossible de sélectionner du texte par accident */
 }
