@@ -1,0 +1,8 @@
+# Secrets : uniquement en local, jamais dans Git.
+.env
+
+# Python
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/

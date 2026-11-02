@@ -18,7 +18,19 @@
 
 import type { ComponentType } from "react";
 import type { WidgetType } from "@/lib/types";
+import Agenda from "@/components/widgets/Agenda";
+import Alert from "@/components/widgets/Alert";
 import Clock from "@/components/widgets/Clock";
+import DailyReview from "@/components/widgets/DailyReview";
+import Footer from "@/components/widgets/Footer";
+import Greeting from "@/components/widgets/Greeting";
+import Habits from "@/components/widgets/Habits";
+import Menu from "@/components/widgets/Menu";
+import Message from "@/components/widgets/Message";
+import Priorities from "@/components/widgets/Priorities";
+import Transport from "@/components/widgets/Transport";
+import Weather from "@/components/widgets/Weather";
+import WeatherTomorrow from "@/components/widgets/WeatherTomorrow";
 
 /* Tout widget reçoit la même chose : ses réglages, et rien d'autre. Ses
  * données, il va les chercher lui-même dans lib/mock.ts (tâche 6). C'est ce
@@ -34,5 +46,22 @@ export type WidgetComponent = ComponentType<{
  * neuf widgets existeront, « Partial » sautera — et TypeScript signalera
  * alors tout oubli. */
 export const widgetRegistry: Partial<Record<WidgetType, WidgetComponent>> = {
+  // Communs à plusieurs modes.
   clock: Clock,
+  alert: Alert,
+  footer: Footer,
+
+  // Mode matin (tâche 6).
+  weather: Weather,
+  greeting: Greeting,
+  priorities: Priorities,
+  transport: Transport,
+  habits: Habits,
+
+  // Mode soir (tâche 7).
+  weatherTomorrow: WeatherTomorrow,
+  dailyReview: DailyReview,
+  agenda: Agenda,
+  menu: Menu,
+  message: Message,
 };

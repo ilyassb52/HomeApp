@@ -1,0 +1,20 @@
+# Le serveur
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# La base de données
+sqlalchemy==2.0.36
+alembic==1.14.0
+psycopg[binary]==3.2.3
+
+# La configuration lue depuis les variables d'environnement
+pydantic-settings==2.7.0
+
+# Les fuseaux horaires : l'image python:slim n'embarque pas ceux du système,
+# et zoneinfo en a besoin pour connaître Europe/Paris.
+tzdata==2024.2
+
+# Qualité et tests
+pytest==8.3.4
+httpx==0.28.1
+ruff==0.8.4

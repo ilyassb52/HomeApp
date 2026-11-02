@@ -12,6 +12,7 @@
 
 import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
+import Providers from "./providers";
 import "./globals.css";
 
 /* --------------------------------------------------------------------------
@@ -70,13 +71,18 @@ export const viewport: Viewport = {
  * outfit.variable : la classe fournie par Next qui installe --font-outfit.
  * antialiased : lisse le rendu du texte, plus agréable en très grande taille.
  *
+ * <Providers> entoure toutes les pages : il leur donne le cache des données
+ * de l'API (voir providers.tsx).
+ *
  * Le fond noir n'est PAS écrit ici : il est dans globals.css, parce qu'il
  * concerne la page entière et non ce composant. Un seul endroit par décision.
  * -------------------------------------------------------------------------- */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${outfit.variable} antialiased`}>
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

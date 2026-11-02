@@ -25,18 +25,15 @@
  * ========================================================================== */
 
 import type { CSSProperties, ReactNode } from "react";
+import type { Tone } from "@/lib/types";
 
 /* --------------------------------------------------------------------------
- * 1. Les tons disponibles
+ * 1. Les états de la carte
  *
- * Ce sont les cinq couleurs de thème de la section 4. Elles sont volontairement
- * listées ici et pas dans lib/types.ts : pour l'instant, la carte est seule à
- * s'en servir. Dès qu'un deuxième fichier en aura besoin (les widgets, à la
- * tâche 6), ce type déménagera dans lib/types.ts — on factorise à la deuxième
- * occurrence, pas avant.
+ * Le type Tone — les cinq couleurs de thème de la section 4 — vivait ici tant
+ * que la carte était seule à s'en servir. Les widgets et les profils en ont
+ * maintenant besoin : il est passé dans lib/types.ts, comme annoncé.
  * -------------------------------------------------------------------------- */
-export type CardTone = "amber" | "cyan" | "magenta" | "neon-green" | "coral";
-
 export type CardVariant = "plain" | "tinted" | "alert";
 
 /* Chaque état correspond à une combinaison de classes CSS. Les écrire dans un
@@ -51,7 +48,7 @@ const VARIANT_CLASSES: Record<CardVariant, string> = {
 type CardProps = {
   children: ReactNode;
   /** Couleur du thème de la carte. Par défaut amber, l'accent du brief. */
-  tone?: CardTone;
+  tone?: Tone;
   /** Niveau de mise en avant. Par défaut la carte discrète. */
   variant?: CardVariant;
   /** Pour la mise en page du widget qui l'utilise (largeur, marges…). */

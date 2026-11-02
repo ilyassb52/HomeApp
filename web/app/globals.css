@@ -75,33 +75,67 @@
    * On la branche ici sur --font-sans, la police par défaut de Tailwind,
    * pour que tout le site l'utilise sans avoir à le préciser. */
   --font-sans: var(--font-outfit);
+
+  /* --- Animations des icônes — tableau de la section 7 du brief ---
+   *
+   * Chaque --animate-X déclaré ici crée la classe « animate-X », à poser sur
+   * l'élément SVG à animer. Les mouvements eux-mêmes (les @keyframes) sont
+   * écrits plus bas, dans la section 5.
+   *
+   * La forme est toujours : nom-du-mouvement, durée, accélération, répétition.
+   * « infinite » car ces icônes tournent en permanence sur le miroir.
+   *
+   * Attention : animate-spin existe déjà dans Tailwind, à 1 seconde. En le
+   * redéclarant ici, on le remplace par notre version à 14 secondes — la
+   * seule utilisée dans ce projet (les rayons du soleil). */
+  --animate-spin: spin 14s linear infinite;
+  --animate-drift: drift 4s ease-in-out infinite;
+  --animate-bob: bob 2.6s ease-in-out infinite;
+  --animate-drop: drop 1.4s ease-in infinite;
+  --animate-flicker: flicker 0.9s ease-in-out infinite;
+  --animate-ride: ride 2.2s ease-in-out infinite alternate;
+  --animate-blink: blink 4s ease-in-out infinite;
+  --animate-twinkle: twinkle 2.2s ease-in-out infinite;
+  --animate-wiggle: wiggle 2.5s ease-in-out infinite;
+  --animate-sway: sway 2s ease-in-out infinite;
+  --animate-steam: steam 2.4s ease-out infinite;
+  --animate-pop: pop 1.8s ease-in-out infinite;
+  --animate-confetti: confetti 2.8s ease-out infinite;
 }
 
 /* --------------------------------------------------------------------------
  * 3. La page entière
  *
- * Ces règles valent pour tout l'écran, pas pour un composant en particulier.
- * Elles traduisent une contrainte physique : l'écran est posé derrière un
- * miroir sans tain, personne ne le touche et il n'y a ni souris ni clavier.
+ * Deux écrans très différents partagent cette feuille : le miroir (/mirror)
+ * et l'appli téléphone (/app/...). Seul le commun est posé sur html et body.
+ * Ce qui est propre au miroir vit dans la classe .mirror-screen plus bas :
+ * appliqué à toutes les pages, il empêcherait le téléphone de défiler.
  * -------------------------------------------------------------------------- */
 html {
   height: 100%;
-  overflow: hidden; /* aucune barre de défilement, jamais (section 10) */
   color-scheme: dark; /* évite un éclair blanc du navigateur au chargement */
 }
 
 body {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
 
   /* var(--color-bg) = le jeton déclaré plus haut. En CSS brut on écrit
    * var(--nom) ; dans un composant React on écrirait la classe bg-bg. */
   background-color: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
+}
 
-  cursor: none; /* pas de flèche de souris visible sur le miroir */
-  user-select: none; /* impossible de sélectionner du texte par accident */
+/* L'écran du miroir — posée par MirrorFrame et par l'écran noir de veille.
+ *
+ * Le miroir est une tablette tactile, accrochée au mur. Ces règles évitent
+ * qu'un doigt ou un coup de chiffon fasse défiler l'écran ou surligne du
+ * texte, et cachent le curseur quand on le teste avec une souris. */
+.mirror-screen {
+  overflow: hidden; /* aucune barre de défilement, jamais (section 10) */
+  cursor: none;
+  user-select: none;
+  touch-action: none; /* pas de zoom ni de défilement au doigt */
 }
 
 /* --------------------------------------------------------------------------
@@ -162,5 +196,262 @@ body {
   .card--alert {
     box-shadow: 0 0 14px
       color-mix(in srgb, var(--tone, var(--color-amber)) 35%, transparent);
+  }
+
+  /* ------------------------------------------------------------------------
+   * Les morceaux d'icône que l'on anime
+   *
+   * UN PIÈGE PROPRE AU SVG. Quand on fait tourner un <div>, il tourne autour
+   * de son centre. Un élément SVG, lui, tourne par défaut autour du coin
+   * supérieur gauche de TOUT le dessin — pas du sien. Une flamme censée
+   * vaciller part alors en diagonale à travers l'écran.
+   *
+   * transform-box: fill-box corrige ça : « calcule le centre par rapport à
+   * MA propre boîte ». C'est la règle technique imposée par la section 7 du
+   * brief, et elle s'applique à tout morceau de SVG animé.
+   *
+   * Les trois variantes correspondent au point autour duquel ça bouge :
+   *   .icon-part         — le centre : rotation, pulsation, va-et-vient
+   *   .icon-part--bottom — le bas : une flamme s'écrase sur sa base
+   *   .icon-part--top    — le haut : un balai pend et se balance
+   * ---------------------------------------------------------------------- */
+  .icon-part {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .icon-part--bottom {
+    transform-box: fill-box;
+    transform-origin: bottom;
+  }
+
+  .icon-part--top {
+    transform-box: fill-box;
+    transform-origin: top;
+  }
+
+  /* ------------------------------------------------------------------------
+   * Les éléments colorés par un ton
+   *
+   * Même mécanisme que .card : le composant pose --tone en style, et ces
+   * règles la lisent. Une seule écriture couvre les cinq couleurs.
+   *
+   *   .tone-chip — la pastille derrière une icône de catégorie, ou le badge
+   *                de ligne des transports : fond teinté, trait coloré
+   *   .tone-dot  — la pastille pleine d'un profil
+   * ---------------------------------------------------------------------- */
+  .tone-chip {
+    background-color: color-mix(
+      in srgb,
+      var(--tone, var(--color-amber)) 16%,
+      transparent
+    );
+    color: var(--tone, var(--color-amber));
+  }
+
+  .tone-dot {
+    background-color: var(--tone, var(--color-amber));
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 5. Les mouvements — tableau de la section 7 du brief
+ *
+ * Un @keyframes décrit les étapes d'un mouvement, de 0 % à 100 % de sa durée.
+ * La durée, elle, est fixée plus haut dans @theme.
+ *
+ * RÈGLE À RESPECTER : uniquement transform et opacity (section 10 du brief).
+ * Jamais width, height, top, left ni margin. Ces dernières obligent le
+ * navigateur à recalculer la position de toute la page à chaque image ;
+ * transform et opacity sont traitées par la carte graphique. L'écran tourne
+ * 24 h sur 24 : la différence se paie en chaleur et en électricité.
+ * -------------------------------------------------------------------------- */
+
+/* Rotation complète — les rayons du soleil. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Va-et-vient horizontal de 5 px — le nuage. */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+}
+
+/* Montée et descente de 4 px — smiley, parapluie, goutte, lune, gâteau. */
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Chute de 11 px avec apparition puis disparition — les gouttes de pluie.
+ * L'opacité part de 0 : la goutte naît sous le nuage au lieu d'y apparaître
+ * brutalement. */
+@keyframes drop {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(11px);
+    opacity: 0;
+  }
+}
+
+/* Écrasement vertical — la flamme et la bougie. À utiliser avec
+ * .icon-part--bottom, sinon la flamme se tasse par le milieu. */
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1);
+  }
+  50% {
+    transform: scaleY(0.82) scaleX(1.06);
+  }
+}
+
+/* Aller-retour horizontal de 10 px — le train. Le retour n'est pas écrit
+ * ici : « alternate », dans @theme, rejoue le mouvement à l'envers. */
+@keyframes ride {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(10px);
+  }
+}
+
+/* Clignement — les yeux du smiley. Les paupières restent ouvertes 92 % du
+ * temps : c'est ce long palier qui donne un clignement bref et naturel. */
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+
+/* Pulsation d'opacité et de taille — étoiles et étincelles. */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* Petite secousse puis repos — la poubelle et le caddie. Rien ne bouge
+ * pendant les deux premiers tiers : c'est le repos qui rend la secousse
+ * lisible. */
+@keyframes wiggle {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0deg);
+  }
+  76% {
+    transform: rotate(-6deg);
+  }
+  82% {
+    transform: rotate(5deg);
+  }
+  88% {
+    transform: rotate(-3deg);
+  }
+}
+
+/* Balancier de ±10° — le balai. À utiliser avec .icon-part--top. */
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+/* Montée avec fondu — la vapeur de la casserole. */
+@keyframes steam {
+  0% {
+    transform: translateY(0) scale(0.9);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-9px) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* Grossissement léger — le cœur et le livre. */
+@keyframes pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.13);
+  }
+}
+
+/* Montée de 8 px avec rotation de 45° — les confettis. */
+@keyframes confetti {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-8px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 6. Quand le système demande moins d'animations
+ *
+ * Certains systèmes proposent un réglage « réduire les animations », pour les
+ * personnes que le mouvement gêne ou rend malades. Le respecter est exigé par
+ * la section 7 du brief.
+ *
+ * On écrit « animation: none » et non une durée très courte : avec une durée
+ * courte, le mouvement se joue instantanément et s'arrête sur sa DERNIÈRE
+ * étape — or une goutte de pluie ou un confetti finissent à opacity 0. Les
+ * icônes disparaîtraient. « none » annule l'animation et rend à chaque
+ * élément son apparence normale, donc visible, comme le demande le brief.
+ * -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
 }

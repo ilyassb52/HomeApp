@@ -1,0 +1,10 @@
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+# E/F : les erreurs de base ; I : l'ordre des imports ; UP : la syntaxe
+# Python moderne (str | None plutôt que Optional[str]).
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

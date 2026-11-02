@@ -1,0 +1,55 @@
+# ==========================================================================
+# docker-compose.yml — l'infrastructure locale : la base et l'API
+#
+# Une seule commande lance tout :   docker compose up --build
+#
+#   db   PostgreSQL 16. Les données vivent dans le volume « db-data » : elles
+#        survivent à un arrêt des conteneurs (docker compose down), mais pas
+#        à « docker compose down -v », qui efface aussi les volumes.
+#   api  FastAPI. Le dossier api/ est monté dans le conteneur : modifier un
+#        fichier Python relance le serveur tout seul (--reload).
+#
+# Les identifiants de la base viennent du fichier .env, à la racine, que
+# Docker Compose lit automatiquement. Copier .env.example en .env la
+# première fois.
+# ==========================================================================
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    # L'API ne doit démarrer qu'une fois la base prête à répondre, pas
+    # seulement une fois le conteneur lancé : c'est ce que vérifie ce test.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  api:
+    build: ./api
+    environment:
+      # « db » est le nom du service ci-dessus : dans le réseau de Docker
+      # Compose, chaque service est joignable par son nom.
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    # Au démarrage : appliquer les migrations, puis lancer le serveur.
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - ./api:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

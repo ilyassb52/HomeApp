@@ -90,9 +90,9 @@ export default function MirrorFrame({ children }: { children: ReactNode }) {
   return (
     /* Calque 1 — la zone visible.
      * fixed inset-0 = collé aux quatre bords de la fenêtre.
-     * overflow-hidden = garantie de dernier recours : même en cas d'arrondi,
-     * aucune barre de défilement n'apparaît. */
-    <div className="fixed inset-0 overflow-hidden bg-bg">
+     * mirror-screen (globals.css) = pas de défilement, de curseur ni de
+     * sélection : même en cas d'arrondi, aucune barre n'apparaît. */
+    <div className="mirror-screen fixed inset-0 bg-bg">
       <div
         /* Le cadre lui-même. top-1/2 left-1/2 place son coin supérieur gauche
          * au centre de la fenêtre ; le translate(-50%, -50%) du style le

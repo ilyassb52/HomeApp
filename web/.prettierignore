@@ -4,3 +4,5 @@ build/
 node_modules/
 package-lock.json
 next-env.d.ts
+# Généré par « npm run api:types » : ne pas reformater à la main.
+lib/api/schema.d.ts

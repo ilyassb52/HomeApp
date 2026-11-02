@@ -5,7 +5,12 @@
       { "id": "clock-1", "type": "clock", "area": "header-left" },
       { "id": "weather-1", "type": "weather", "area": "header-right" },
       { "id": "greeting-1", "type": "greeting", "area": "main" },
-      { "id": "clock-2", "type": "clock", "area": "main" },
+      {
+        "id": "alert-1",
+        "type": "alert",
+        "area": "main",
+        "settings": { "kind": "rain" }
+      },
       {
         "id": "priorities-1",
         "type": "priorities",
@@ -36,7 +41,12 @@
         "type": "weatherTomorrow",
         "area": "header-right"
       },
-      { "id": "alert-1", "type": "alert", "area": "main" },
+      {
+        "id": "alert-1",
+        "type": "alert",
+        "area": "main",
+        "settings": { "kind": "trash" }
+      },
       { "id": "daily-review-1", "type": "dailyReview", "area": "main" },
       {
         "id": "agenda-1",
