@@ -43,10 +43,10 @@ export default function DailyReview() {
 
   return (
     <Card tone="neon-green" variant="tinted">
-      <div className="flex flex-col gap-[20px]">
+      <div className="flex flex-col gap-mp-20">
         <div className="flex items-center gap-5">
           <Sparkles size={64} className="text-neon-green" />
-          <p className="text-[42px] leading-none font-semibold text-ink">
+          <p className="text-mp-42 leading-none font-semibold text-ink">
             {headline}
           </p>
         </div>
@@ -54,18 +54,18 @@ export default function DailyReview() {
         {/* La barre : un rail sombre, et par-dessus une barre verte dont la
             largeur est le pourcentage. La largeur est calculée, donc écrite
             en style et non en classe Tailwind. */}
-        <div className="h-[12px] w-full overflow-hidden rounded-full bg-ink/10">
+        <div className="h-mp-12 w-full overflow-hidden rounded-full bg-ink/10">
           <div
             className="tone-dot h-full rounded-full"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
 
-        <ul className="flex flex-col gap-[10px]">
+        <ul className="flex flex-col gap-mp-10">
           {priorities.map((priority) => (
             <li
               key={priority.id}
-              className={`text-[34px] font-light ${
+              className={`text-mp-34 font-light ${
                 priority.done ? "text-muted line-through" : "text-ink"
               }`}
             >

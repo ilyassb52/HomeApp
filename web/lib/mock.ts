@@ -74,11 +74,11 @@ export const mockWeatherTomorrow: Weather = {
  * 3. Les alertes
  *
  * Le miroir n'affiche qu'une alerte à la fois, et laquelle dépend du moment :
- * la pluie le matin, les poubelles le soir. C'est config/layouts.json qui
- * choisit, par le réglage « kind » du widget alert.
+ * la pluie le matin, les poubelles le soir. C'est la page qui choisit, par
+ * la prop « kind » du widget Alert.
  *
- * Pourquoi la configuration plutôt que le mode ? Parce que le widget ne
- * connaît pas le mode, et ne doit pas le connaître : il affiche ce qu'on lui
+ * Pourquoi la page plutôt que le widget ? Parce que le widget ne sait pas
+ * sur quelle page il est, et ne doit pas le savoir : il affiche ce qu'on lui
  * demande. C'est le même principe que partout ailleurs dans le projet.
  *
  * Vider ce tableau est le moyen le plus simple de vérifier qu'une alerte

@@ -14,6 +14,7 @@
  * ========================================================================== */
 
 import type { CSSProperties } from "react";
+import { mp } from "@/lib/mirror-pixels";
 import type { Tone } from "@/lib/types";
 
 export default function ToneDot({
@@ -24,7 +25,7 @@ export default function ToneDot({
   tone: Tone;
   /** false = profil en retrait, affiché à 35 % d'opacité. */
   active?: boolean;
-  /** Diamètre en pixels du cadre. */
+  /** Diamètre en pixels miroir. */
   size?: number;
 }) {
   return (
@@ -33,8 +34,8 @@ export default function ToneDot({
       style={
         {
           "--tone": `var(--color-${tone})`,
-          width: size,
-          height: size,
+          width: mp(size),
+          height: mp(size),
           opacity: active ? 1 : 0.35,
         } as CSSProperties
       }

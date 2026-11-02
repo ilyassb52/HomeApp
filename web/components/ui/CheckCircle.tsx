@@ -11,20 +11,22 @@
  * qui réagit au doigt.
  * ========================================================================== */
 
+import { mp } from "@/lib/mirror-pixels";
+
 export default function CheckCircle({
   done,
   size,
 }: {
   done: boolean;
-  /** Diamètre du cercle, en pixels. */
+  /** Diamètre du cercle, en pixels miroir. */
   size: number;
 }) {
   return (
     <span
       className="flex shrink-0 items-center justify-center rounded-full border-2"
       style={{
-        width: size,
-        height: size,
+        width: mp(size),
+        height: mp(size),
         borderColor: "color-mix(in srgb, var(--tone) 55%, transparent)",
       }}
     >
@@ -33,7 +35,7 @@ export default function CheckCircle({
          * cercle de 34 px sur le miroir. */
         <span
           className="tone-dot block rounded-full"
-          style={{ width: size * 0.53, height: size * 0.53 }}
+          style={{ width: mp(size * 0.53), height: mp(size * 0.53) }}
         />
       ) : null}
     </span>

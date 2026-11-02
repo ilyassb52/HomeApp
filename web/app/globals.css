@@ -129,13 +129,194 @@ body {
 /* L'écran du miroir — posée par MirrorFrame et par l'écran noir de veille.
  *
  * Le miroir est une tablette tactile, accrochée au mur. Ces règles évitent
- * qu'un doigt ou un coup de chiffon fasse défiler l'écran ou surligne du
- * texte, et cachent le curseur quand on le teste avec une souris. */
+ * qu'un doigt ou un coup de chiffon zoome l'écran ou surligne du texte, et
+ * cachent le curseur quand on le teste avec une souris. */
 .mirror-screen {
-  overflow: hidden; /* aucune barre de défilement, jamais (section 10) */
+  overflow: hidden; /* la page elle-même ne bouge pas : seule la liste des
+                       priorités défile */
   cursor: none;
   user-select: none;
-  touch-action: none; /* pas de zoom ni de défilement au doigt */
+  touch-action: pan-y; /* défiler de haut en bas au doigt, mais pas zoomer */
+
+  /* LE PIXEL MIROIR
+   *
+   * Tous les widgets sont dessinés en « pixels du design » : l'heure fait
+   * 186, un texte 34, la marge 72. --mp dit combien vaut UN de ces pixels
+   * sur l'écran réel.
+   *
+   * Les pages sont dessinées sur une toile de 1080 × 1920 debout. On prend
+   * le plus petit des deux rapports : la toile entière tient toujours dans
+   * l'écran, sans rien couper. Sur la tablette prévue, --mp vaut exactement
+   * 1px ; sur un écran deux fois plus petit, 0,5px. Tout grandit ou
+   * rétrécit ensemble — les positions x/y comprises. */
+  --mp: min(100vw / 1080, 100dvh / 1920);
+
+  /* Les barres de défilement gâcheraient l'effet miroir : on les cache. Le
+   * défilement, lui, marche toujours (molette, doigt). */
+  scrollbar-width: none;
+  & * {
+    scrollbar-width: none;
+  }
+}
+
+/* Couché, la toile fait 1920 × 1080 : même calcul, largeur et hauteur
+ * inversées. */
+@media (orientation: landscape) {
+  .mirror-screen {
+    --mp: min(100vw / 1920, 100dvh / 1080);
+  }
+}
+
+/* La toile de référence, posée par MirrorFrame : 1080 × 1920 pixels miroir
+ * debout, 1920 × 1080 couchée. C'est le repère de toutes les positions x/y. */
+.mirror-canvas {
+  position: relative;
+  width: calc(1080 * var(--mp));
+  height: calc(1920 * var(--mp));
+}
+@media (orientation: landscape) {
+  .mirror-canvas {
+    width: calc(1920 * var(--mp));
+    height: calc(1080 * var(--mp));
+  }
+}
+
+/* Un widget posé sur la toile — utilisé par components/mirror/Place.tsx.
+ *
+ * Place écrit les nombres dans des variables : --px et --py (debout), --lx
+ * et --ly (couché), et --pw / --lw pour la largeur s'il y en a une. Ces
+ * règles choisissent la bonne paire selon le sens de l'écran.
+ *
+ * Sans largeur donnée, var(--pw) n'existe pas : le calcul devient invalide
+ * et le navigateur revient à width: auto, la largeur du contenu. */
+.place {
+  position: absolute;
+  left: calc(var(--px) * var(--mp));
+  top: calc(var(--py) * var(--mp));
+  width: calc(var(--pw) * var(--mp));
+}
+@media (orientation: landscape) {
+  .place {
+    left: calc(var(--lx) * var(--mp));
+    top: calc(var(--ly) * var(--mp));
+    width: calc(var(--lw) * var(--mp));
+  }
+}
+
+/* LE MODE CALIBRAGE — /mirror?calibrer
+ *
+ * La toile reçoit l'attribut data-calibrate. Elle affiche alors une grille
+ * tous les 60 pixels miroir (une ligne plus marquée tous les 300), et chaque
+ * widget un contour et ses coordonnées. Rien de tout cela n'existe en temps
+ * normal : ces règles ne s'appliquent que sous [data-calibrate]. */
+.mirror-canvas[data-calibrate] {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-cyan) 25%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-cyan) 25%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-cyan) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-cyan) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size:
+    calc(300 * var(--mp)) calc(300 * var(--mp)),
+    calc(300 * var(--mp)) calc(300 * var(--mp)),
+    calc(60 * var(--mp)) calc(60 * var(--mp)),
+    calc(60 * var(--mp)) calc(60 * var(--mp));
+  outline: 1px solid var(--color-cyan);
+}
+.mirror-canvas[data-calibrate] .place {
+  outline: 1px dashed var(--color-magenta);
+}
+/* attr() lit l'attribut posé par Place : « x 72 · y 72 ». */
+.mirror-canvas[data-calibrate] .place::after {
+  content: attr(data-portrait);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-100%);
+  padding: 2px 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--color-bg);
+  background: var(--color-magenta);
+}
+@media (orientation: landscape) {
+  .mirror-canvas[data-calibrate] .place::after {
+    content: attr(data-landscape);
+  }
+}
+
+/* Un fondu en bas d'une liste qui défile, pour montrer qu'il y a une
+ * suite. mask-image rend le bas progressivement transparent : les 15
+ * derniers pour cent passent de visible à invisible. */
+.scroll-fade {
+  mask-image: linear-gradient(to bottom, black 85%, transparent);
+}
+
+/* Les tailles en pixels miroir, utilisables comme des classes Tailwind :
+ * text-mp-34 = une police de 34 pixels miroir, gap-mp-18 = un écart de 18,
+ * etc. --value(number) est le nombre écrit après le tiret.
+ *
+ * var(--mp, 1px) : hors du miroir (pages /app), --mp n'existe pas et vaut
+ * donc 1px. Un composant partagé garde ainsi sa taille habituelle. */
+@utility text-mp-* {
+  font-size: calc(--value(number) * var(--mp, 1px));
+}
+@utility tracking-mp-* {
+  letter-spacing: calc(--value(number) * var(--mp, 1px));
+}
+@utility gap-mp-* {
+  gap: calc(--value(number) * var(--mp, 1px));
+}
+@utility gap-x-mp-* {
+  column-gap: calc(--value(number) * var(--mp, 1px));
+}
+@utility p-mp-* {
+  padding: calc(--value(number) * var(--mp, 1px));
+}
+@utility px-mp-* {
+  padding-inline: calc(--value(number) * var(--mp, 1px));
+}
+@utility py-mp-* {
+  padding-block: calc(--value(number) * var(--mp, 1px));
+}
+@utility mt-mp-* {
+  margin-top: calc(--value(number) * var(--mp, 1px));
+}
+@utility mb-mp-* {
+  margin-bottom: calc(--value(number) * var(--mp, 1px));
+}
+@utility w-mp-* {
+  width: calc(--value(number) * var(--mp, 1px));
+}
+@utility h-mp-* {
+  height: calc(--value(number) * var(--mp, 1px));
+}
+@utility max-h-mp-* {
+  max-height: calc(--value(number) * var(--mp, 1px));
+}
+@utility rounded-mp-* {
+  border-radius: calc(--value(number) * var(--mp, 1px));
+}
+@utility right-mp-* {
+  right: calc(--value(number) * var(--mp, 1px));
+}
+@utility bottom-mp-* {
+  bottom: calc(--value(number) * var(--mp, 1px));
 }
 
 /* --------------------------------------------------------------------------
@@ -167,12 +348,12 @@ body {
     background-color: color-mix(in srgb, var(--color-card) 78%, transparent);
     border: 1px solid
       color-mix(in srgb, var(--tone, var(--color-amber)) 25%, transparent);
-    border-radius: 30px;
+    border-radius: calc(30 * var(--mp, 1px));
 
     /* Espace intérieur. Le brief ne le fixe pas : valeur choisie au milieu de
      * la fourchette d'espacement des blocs (33–39 px), à ajuster à la relecture
      * visuelle de la tâche 10 si les cartes paraissent trop serrées. */
-    padding: 36px;
+    padding: calc(36 * var(--mp, 1px));
   }
 
   /* Carte mise en avant : le fond prend la teinte du ton, la bordure épaissit.
@@ -194,7 +375,7 @@ body {
 
   /* La lueur de l'alerte, telle que décrite par le brief : 14 px, ton à 35 %. */
   .card--alert {
-    box-shadow: 0 0 14px
+    box-shadow: 0 0 calc(14 * var(--mp, 1px))
       color-mix(in srgb, var(--tone, var(--color-amber)) 35%, transparent);
   }
 

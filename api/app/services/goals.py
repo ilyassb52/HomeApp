@@ -15,10 +15,6 @@ from sqlalchemy.orm import Session
 
 from app.models import Goal
 
-# Le miroir affiche 3 priorités : on n'en laisse pas créer davantage.
-# Une priorité cochée aujourd'hui compte encore, puisqu'elle reste affichée.
-MAX_GOALS_PER_DAY = 3
-
 
 def list_visible_goals(session: Session, profile_id: int, now: datetime) -> list[Goal]:
     """Les priorités à afficher aujourd'hui, dans l'ordre.

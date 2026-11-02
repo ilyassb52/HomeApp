@@ -60,7 +60,7 @@ export function getWeatherLook(condition: WeatherCondition): WeatherLook {
 export function WeatherReading({
   data,
   iconSize = 92,
-  temperatureClassName = "text-[102px]",
+  temperatureClassName = "text-mp-102",
 }: {
   data: WeatherData;
   iconSize?: number;
@@ -86,9 +86,9 @@ export default function Weather() {
   return (
     /* items-end : la zone header-right est alignée à droite, les deux lignes
        doivent donc se caler sur le bord droit. */
-    <div className="flex flex-col items-end gap-[10px]">
+    <div className="flex flex-col items-end gap-mp-10">
       <WeatherReading data={data} />
-      <p className="text-[30px] font-light text-muted">
+      <p className="text-mp-30 font-light text-muted">
         {data.label} · {data.minTemperature}° / {data.maxTemperature}°
       </p>
     </div>

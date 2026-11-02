@@ -16,7 +16,6 @@ import { useState } from "react";
 import AddPriorityForm from "@/components/app/AddPriorityForm";
 import PriorityRow from "@/components/app/PriorityRow";
 import {
-  MAX_GOALS_PER_DAY,
   useAddGoal,
   useDeleteGoal,
   usePriorities,
@@ -60,7 +59,7 @@ export default function PrioritiesManager() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-4 pt-8 pb-12">
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-4 pt-8">
       <header>
         <p className="text-xs font-semibold tracking-[2px] text-label uppercase">
           Aujourd&apos;hui
@@ -129,14 +128,13 @@ export default function PrioritiesManager() {
             </ul>
           )}
 
-          {priorities.length < MAX_GOALS_PER_DAY ? (
+          {/* Pas de limite au nombre de priorités : la liste défile avec
+              la page. sticky bottom-0 garde le formulaire collé en bas de
+              l'écran pendant ce temps, pour pouvoir ajouter sans remonter.
+              Le fond bg-bg empêche la liste de transparaître dessous. */}
+          <div className="sticky bottom-0 -mx-4 bg-bg px-4 pt-3 pb-4">
             <AddPriorityForm onAdd={add} isSending={addGoal.isPending} />
-          ) : (
-            <p className="text-center text-sm font-light text-muted">
-              {MAX_GOALS_PER_DAY} priorités, c&apos;est le maximum pour
-              aujourd&apos;hui.
-            </p>
-          )}
+          </div>
         </>
       )}
     </main>

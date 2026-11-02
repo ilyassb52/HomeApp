@@ -26,11 +26,6 @@ import type { Priority, PriorityCategory } from "@/lib/types";
  * miroir en moins d'une demi-minute, sans charger l'API pour rien. */
 const PRIORITIES_REFRESH_MS = 30_000;
 
-/* RECOPIE de MAX_GOALS_PER_DAY dans api/app/services/goals.py. L'API reste
- * seule juge (elle refuse la 4e avec un 409) ; cette copie sert seulement à
- * cacher le formulaire d'ajout avant d'essayer. Changer les deux ensemble. */
-export const MAX_GOALS_PER_DAY = 3;
-
 /* RECOPIE de GoalText dans api/app/schemas/goal.py : une priorité tient sur
  * une carte, 120 caractères au plus. Le champ de saisie s'arrête là. */
 export const GOAL_TEXT_MAX_LENGTH = 120;
@@ -194,15 +189,10 @@ export function useAddGoal() {
       text: string;
       category: PriorityCategory;
     }) => {
-      const { error, response } = await api.POST("/goals", {
+      const { error } = await api.POST("/goals", {
         params: profileQuery,
         body: newGoal,
       });
-      /* 409 = la limite du jour est atteinte (par exemple si une priorité a
-       * été ajoutée depuis un autre téléphone entre-temps). */
-      if (response.status === 409) {
-        throw new Error(`${MAX_GOALS_PER_DAY} priorités maximum par jour.`);
-      }
       throwIfError(error, "Ajout impossible.");
     },
     onSettled: () =>

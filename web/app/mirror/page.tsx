@@ -1,13 +1,14 @@
 /* ==========================================================================
  * app/mirror/page.tsx — l'écran du miroir, à l'adresse « /mirror »
  *
- * Elle fait quatre choses, et toujours aucune ne concerne un widget :
+ * Elle fait trois choses, et aucune ne concerne un widget :
  *
  *   1. attendre d'être affichée dans le navigateur ;
- *   2. choisir le mode — celui de l'URL s'il y en a un, sinon celui de
- *      l'heure de Paris, recalculé chaque minute ;
- *   3. afficher l'écran de veille si c'est la nuit ;
- *   4. sinon, demander les widgets du mode et les confier à WidgetRenderer.
+ *   2. choisir la page — celle de l'URL s'il y en a une, sinon la première ;
+ *   3. l'afficher dans le cadre, avec le bouton « page suivante ».
+ *
+ * Ce que contient chaque page, et où se pose chaque widget, est décidé dans
+ * components/mirror/pages/.
  *
  * POURQUOI ATTENDRE D'ÊTRE DANS LE NAVIGATEUR ?
  *
@@ -20,19 +21,14 @@
 
 "use client";
 
-import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
+import { Suspense, useState, useSyncExternalStore } from "react";
 import { useSearchParams } from "next/navigation";
 import MirrorFrame from "@/components/mirror/MirrorFrame";
-import WidgetRenderer from "@/components/mirror/WidgetRenderer";
-import { getWidgetsForMode } from "@/lib/layouts";
-import { getMode, parseMode } from "@/lib/modes";
+import PageSwitcher from "@/components/mirror/PageSwitcher";
+import { MIRROR_PAGES } from "@/components/mirror/pages";
+import { findPageIndex } from "@/lib/pages";
 
-/* Toutes les minutes : assez fin pour que la bascule de 15 h 00 se voie dans
- * la minute, assez rare pour ne rien coûter. Les heures de bascule étant
- * rondes, vérifier plus souvent n'apporterait rien. */
-const MODE_CHECK_INTERVAL_MS = 60_000;
-
-/** Ce que voit le serveur, et ce qu'affiche la veille : rien. */
+/** Ce que voit le serveur avant que le navigateur prenne le relais : rien. */
 function BlackScreen() {
   return <div className="mirror-screen fixed inset-0 bg-bg" />;
 }
@@ -82,40 +78,39 @@ function MirrorScreen() {
   const isBrowser = useIsBrowser();
   const searchParams = useSearchParams();
 
-  /* L'instant courant, relu chaque minute. Changer cet état est ce qui fait
-   * basculer l'écran tout seul à 15 h 00 ou à 23 h 00, sans rechargement. */
-  const [now, setNow] = useState(() => new Date());
-
-  useEffect(() => {
-    const intervalId = setInterval(
-      () => setNow(new Date()),
-      MODE_CHECK_INTERVAL_MS,
-    );
-    return () => clearInterval(intervalId);
-  }, []);
+  /* La page affichée, par sa position dans MIRROR_PAGES. ?page=evening
+   * choisit celle du départ ; le bouton fait ensuite avancer la position. */
+  const [pageIndex, setPageIndex] = useState(() =>
+    findPageIndex(
+      MIRROR_PAGES.map((page) => page.id),
+      searchParams.get("page"),
+    ),
+  );
 
   if (!isBrowser) {
     return <BlackScreen />;
   }
 
-  /* ?mode=evening force un mode, pour travailler sur l'écran du soir à 10 h
-   * du matin. Sans paramètre — le cas du vrai miroir — c'est l'heure de
-   * Paris qui décide. */
-  const forcedMode = parseMode(searchParams.get("mode"));
-  const mode = forcedMode ?? getMode(now);
+  /* ?calibrer (sans valeur) affiche la grille et les coordonnées. */
+  const calibrate = searchParams.has("calibrer");
 
-  /* PROVISOIRE — tâche 9.
-   * La veille sera un écran noir portant une petite heure en 48 px qui se
-   * déplace lentement, pour ne pas marquer la dalle. En attendant, l'écran
-   * est simplement noir : c'est déjà le bon comportement, il lui manque
-   * seulement l'heure. */
-  if (mode === "sleep") {
-    return <BlackScreen />;
-  }
+  const { Component } = MIRROR_PAGES[pageIndex];
+
+  /* Le « % » (reste de la division) fait revenir à 0 après la dernière
+   * page : avec deux pages, 0 → 1 → 0 → 1… */
+  const nextIndex = (pageIndex + 1) % MIRROR_PAGES.length;
 
   return (
-    <MirrorFrame>
-      <WidgetRenderer widgets={getWidgetsForMode(mode)} />
+    <MirrorFrame
+      calibrate={calibrate}
+      overlay={
+        <PageSwitcher
+          nextLabel={MIRROR_PAGES[nextIndex].label}
+          onNext={() => setPageIndex(nextIndex)}
+        />
+      }
+    >
+      <Component />
     </MirrorFrame>
   );
 }

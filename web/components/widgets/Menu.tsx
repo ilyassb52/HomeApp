@@ -19,14 +19,14 @@ export default function Menu() {
       <div className="flex items-center gap-6">
         <CookingPot size={72} className="text-coral" />
 
-        <div className="flex flex-col gap-[8px]">
+        <div className="flex flex-col gap-mp-8">
           <SectionLabel>Au menu demain</SectionLabel>
-          <p className="text-[36px] leading-tight font-semibold text-ink">
+          <p className="text-mp-36 leading-tight font-semibold text-ink">
             {menu.dish}
           </p>
 
           {menu.reminder ? (
-            <p className="text-[30px] font-light text-muted">{menu.reminder}</p>
+            <p className="text-mp-30 font-light text-muted">{menu.reminder}</p>
           ) : null}
         </div>
       </div>

@@ -10,6 +10,7 @@
  * ========================================================================== */
 
 import type { CSSProperties } from "react";
+import { mp } from "@/lib/mirror-pixels";
 import { CATEGORY_LOOKS } from "@/lib/priority-categories";
 import type { PriorityCategory } from "@/lib/types";
 
@@ -18,7 +19,7 @@ export default function CategoryChip({
   size,
 }: {
   category: PriorityCategory;
-  /** Taille de l'icône en pixels ; la pastille ajoute un quart autour. */
+  /** Taille de l'icône en pixels miroir ; la pastille ajoute un quart autour. */
   size: number;
 }) {
   const { Icon, tone } = CATEGORY_LOOKS[category];
@@ -31,8 +32,8 @@ export default function CategoryChip({
           "--tone": `var(--color-${tone})`,
           /* Marge et arrondi proportionnels à l'icône : 40 px d'icône
            * donnent les 10 px de marge et 18 px d'arrondi du miroir. */
-          padding: size / 4,
-          borderRadius: size * 0.45,
+          padding: mp(size / 4),
+          borderRadius: mp(size * 0.45),
         } as CSSProperties
       }
     >

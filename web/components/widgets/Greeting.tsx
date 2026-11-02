@@ -17,7 +17,6 @@ import {
   mockProfiles,
 } from "@/lib/mock";
 
-
 /* La phrase sous la salutation. Elle vivra dans les données quand l'API
  * existera ; pour l'instant elle est ici, et nulle part ailleurs. */
 const ENCOURAGEMENT = "Belle journée qui commence";
@@ -28,15 +27,15 @@ export default function Greeting() {
   return (
     <div className="flex items-center gap-7">
       <Smiley size={88} className="text-amber" />
-      <div className="flex flex-col gap-[6px]">
-        <p className="text-[60px] leading-none font-semibold text-ink">
+      <div className="flex flex-col gap-mp-6">
+        <p className="text-mp-60 leading-none font-semibold text-ink">
           Bonjour {activeProfile.name} !
         </p>
-        <p className="text-[30px] font-light text-muted">{ENCOURAGEMENT}</p>
+        <p className="text-mp-30 font-light text-muted">{ENCOURAGEMENT}</p>
       </div>
 
       {/* ml-auto pousse les pastilles contre le bord droit de la carte. */}
-      <div className="ml-auto flex items-center gap-[10px]">
+      <div className="ml-auto flex items-center gap-mp-10">
         {mockProfiles.map((profile) => (
           <ToneDot
             key={profile.id}

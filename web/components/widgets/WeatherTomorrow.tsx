@@ -16,20 +16,20 @@ export default function WeatherTomorrow() {
   const data = mockWeatherTomorrow;
 
   return (
-    <div className="flex flex-col items-end gap-[6px]">
+    <div className="flex flex-col items-end gap-mp-6">
       {/* Le petit titre est en texte secondaire et non en SectionLabel : il
           coiffe une valeur dans l'en-tête, pas une liste. */}
-      <p className="text-[27px] font-light text-muted">Demain</p>
+      <p className="text-mp-27 font-light text-muted">Demain</p>
 
       {/* Un cran plus petit que la météo du jour : l'information principale
           du soir est ailleurs, dans la revue de la journée. */}
       <WeatherReading
         data={data}
         iconSize={76}
-        temperatureClassName="text-[84px]"
+        temperatureClassName="text-mp-84"
       />
 
-      <p className="text-[27px] font-light text-muted">{data.label}</p>
+      <p className="text-mp-27 font-light text-muted">{data.label}</p>
     </div>
   );
 }

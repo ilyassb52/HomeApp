@@ -30,10 +30,11 @@
  * ========================================================================== */
 
 import type { ReactNode } from "react";
+import { mp } from "@/lib/mirror-pixels";
 
 /** Ce que reçoit toute icône du projet. */
 export type IconProps = {
-  /** Taille affichée, en pixels du cadre 1080 × 1920. */
+  /** Taille affichée, en pixels miroir (voir lib/mirror-pixels.ts). */
   size?: number;
   /** Classes de couleur ou de position, décidées par le widget. */
   className?: string;
@@ -49,8 +50,12 @@ export default function IconBase({
 }: IconProps & { children: ReactNode }) {
   return (
     <svg
-      width={size}
-      height={size}
+      /* Dans style plutôt qu'en attributs width/height : un attribut SVG
+       * n'accepte qu'un nombre, pas le calc() du pixel miroir.
+       * flexShrink 0 : dans une colonne étroite, une boîte flex écraserait
+       * l'icône pour faire de la place au texte. C'est au texte de passer
+       * à la ligne, pas à l'icône de rétrécir. */
+      style={{ width: mp(size), height: mp(size), flexShrink: 0 }}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

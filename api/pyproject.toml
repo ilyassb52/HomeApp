@@ -6,5 +6,10 @@ line-length = 88
 # Python moderne (str | None plutôt que Optional[str]).
 select = ["E", "F", "I", "UP"]
 
+[tool.ruff.lint.isort]
+# Notre dossier alembic/ porte le même nom que la bibliothèque : sans cette
+# ligne, ruff croirait que « from alembic import ... » vise notre code.
+known-third-party = ["alembic"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]

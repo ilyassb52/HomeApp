@@ -25,11 +25,11 @@ export default function Message() {
       <div className="flex items-start gap-6">
         <Heart size={64} className="text-magenta" />
 
-        <div className="flex flex-col gap-[8px]">
+        <div className="flex flex-col gap-mp-8">
           <SectionLabel>
             Mot de {getProfileName(message.fromProfileId)}
           </SectionLabel>
-          <p className="text-[34px] leading-snug font-light text-ink">
+          <p className="text-mp-34 leading-snug font-light text-ink">
             {message.text}
           </p>
         </div>

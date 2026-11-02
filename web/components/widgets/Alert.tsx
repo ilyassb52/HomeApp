@@ -6,14 +6,12 @@
  *
  * QUELLE ALERTE AFFICHER ?
  *
- * Le réglage « kind » de config/layouts.json le dit. Le widget ne connaît pas
- * le mode en cours et n'a pas à le connaître : la configuration décide, lui
- * exécute. C'est le principe qui tient tout le projet.
+ * La prop « kind », donnée par la page. Le widget ne sait pas sur quelle
+ * page il est et n'a pas à le savoir : la page décide, lui exécute. C'est
+ * le principe qui tient tout le projet.
  *
  * IL PEUT NE RIEN AFFICHER. Sans alerte correspondante, il renvoie null — et
- * surtout aucun conteneur vide : la section 10 exige qu'un widget muet ne
- * laisse aucun espace dans la pile. Un trou de 36 px au milieu de l'écran se
- * verrait autant qu'une carte.
+ * surtout aucun conteneur vide, qui garderait un cadre ou une marge à l'écran.
  * ========================================================================== */
 
 import TrashBin from "@/components/icons/TrashBin";
@@ -21,7 +19,6 @@ import Umbrella from "@/components/icons/Umbrella";
 import type { IconProps } from "@/components/icons/IconBase";
 import Card from "@/components/ui/Card";
 import { mockAlerts } from "@/lib/mock";
-import { readTextSetting } from "@/lib/settings";
 import type { AlertKind } from "@/lib/types";
 
 const ALERT_ICONS: Record<AlertKind, (props: IconProps) => React.ReactElement> =
@@ -30,17 +27,10 @@ const ALERT_ICONS: Record<AlertKind, (props: IconProps) => React.ReactElement> =
     trash: TrashBin,
   };
 
-export default function Alert({
-  settings,
-}: {
-  settings?: Record<string, unknown>;
-}) {
-  /* Sans réglage « kind », on prend la première alerte disponible : une
-   * configuration incomplète affiche quelque chose plutôt que rien. */
-  const requestedKind = readTextSetting(settings, "kind", "");
-
-  const alert = requestedKind
-    ? mockAlerts.find((candidate) => candidate.kind === requestedKind)
+export default function Alert({ kind }: { kind?: AlertKind }) {
+  /* Sans « kind », on prend la première alerte disponible plutôt que rien. */
+  const alert = kind
+    ? mockAlerts.find((candidate) => candidate.kind === kind)
     : mockAlerts[0];
 
   if (!alert) {
@@ -53,11 +43,11 @@ export default function Alert({
     <Card tone="amber" variant="alert">
       <div className="flex items-center gap-6">
         <Icon size={72} className="text-amber" />
-        <div className="flex flex-col gap-[6px]">
-          <p className="text-[36px] leading-tight font-semibold text-ink">
+        <div className="flex flex-col gap-mp-6">
+          <p className="text-mp-36 leading-tight font-semibold text-ink">
             {alert.title}
           </p>
-          <p className="text-[30px] font-light text-muted">{alert.advice}</p>
+          <p className="text-mp-30 font-light text-muted">{alert.advice}</p>
         </div>
       </div>
     </Card>

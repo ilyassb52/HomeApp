@@ -3,7 +3,7 @@
 app/routers/goals.py — les routes des priorités
 
   GET     /goals             les priorités du jour, dans l'ordre
-  POST    /goals             en ajouter une (3 au maximum)
+  POST    /goals             en ajouter une (sans limite : le miroir défile)
   PATCH   /goals/{id}        modifier le texte, la catégorie, cocher
   DELETE  /goals/{id}        en supprimer une
   PUT     /goals/order       enregistrer un nouvel ordre
@@ -25,11 +25,7 @@ from app.core.clock import get_now
 from app.core.database import get_session
 from app.models import Goal, Profile
 from app.schemas.goal import GoalCreate, GoalOrder, GoalRead, GoalUpdate
-from app.services.goals import (
-    MAX_GOALS_PER_DAY,
-    get_profile_goal,
-    list_visible_goals,
-)
+from app.services.goals import get_profile_goal, list_visible_goals
 
 router = APIRouter(prefix="/goals", tags=["Priorités"])
 
@@ -70,13 +66,6 @@ def create_goal(
     body: GoalCreate, session: SessionDep, profile: ProfileDep, now: NowDep
 ) -> GoalRead:
     visible = list_visible_goals(session, profile.id, now)
-
-    # 409 Conflict : la demande est valide, mais l'état actuel l'interdit.
-    if len(visible) >= MAX_GOALS_PER_DAY:
-        raise HTTPException(
-            status.HTTP_409_CONFLICT,
-            f"{MAX_GOALS_PER_DAY} priorités maximum par jour.",
-        )
 
     # La nouvelle se place après la dernière affichée.
     position = visible[-1].position + 1 if visible else 0

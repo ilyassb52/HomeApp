@@ -10,25 +10,18 @@
  * empêche quiconque d'écrire date.getHours() par distraction et d'obtenir
  * l'heure de la machine au lieu de celle du foyer.
  *
- * Le soir, config/layouts.json ajoute « showMoon: true » et une lune vient
- * se poser à gauche de l'heure. Le widget ne sait pas qu'il est le soir : il
- * lit un réglage, rien de plus.
+ * Le soir, la page lui passe showMoon et une lune vient se poser à gauche
+ * de l'heure. Le widget ne sait pas qu'il est le soir : il lit une prop,
+ * rien de plus.
  * ========================================================================== */
 
 "use client";
 
 import { useEffect, useState } from "react";
 import Moon from "@/components/icons/Moon";
-import { readBooleanSetting } from "@/lib/settings";
 import { formatParisDate, formatParisTime } from "@/lib/time";
 
-export default function Clock({
-  settings,
-}: {
-  settings?: Record<string, unknown>;
-}) {
-  const showMoon = readBooleanSetting(settings, "showMoon", false);
-
+export default function Clock({ showMoon = false }: { showMoon?: boolean }) {
   /* useState(() => new Date()) : la fonction n'est appelée qu'au tout premier
    * affichage. Écrire useState(new Date()) fabriquerait une date inutile à
    * chaque rendu, soit une fois par seconde. */
@@ -53,12 +46,12 @@ export default function Clock({
         {/* 186 px, graisse 200 : les valeurs du tableau de typographie du
             brief. leading-none supprime l'interligne, qui à cette taille
             ajouterait une cinquantaine de pixels de vide sous le texte. */}
-        <p className="text-[186px] leading-none font-extralight text-ink">
+        <p className="text-mp-186 leading-none font-extralight text-ink">
           {formatParisTime(now)}
         </p>
       </div>
 
-      <p className="mt-[12px] text-[34px] font-light text-muted">
+      <p className="mt-mp-12 text-mp-34 font-light text-muted">
         {formatParisDate(now)}
       </p>
     </div>

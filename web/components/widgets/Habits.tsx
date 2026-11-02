@@ -32,27 +32,27 @@ export default function Habits() {
   }
 
   return (
-    <div className="flex flex-col gap-[18px]">
+    <div className="flex flex-col gap-mp-18">
       <SectionLabel>Mes séries</SectionLabel>
 
       {/* grid-cols-3 : trois colonnes de largeur égale, quel que soit le
-          contenu. gap-[36px] est l'espacement entre blocs du brief. */}
-      <div className="grid grid-cols-3 gap-[36px]">
+          contenu. gap-mp-36 est l'espacement entre blocs du brief. */}
+      <div className="grid grid-cols-3 gap-mp-36">
         {mockHabits.map((habit) => {
           const { Icon, tone } = HABIT_LOOKS[habit.kind];
 
           return (
-            <Card key={habit.id} tone={tone} className="py-[26px]">
-              <div className="flex flex-col items-center gap-[10px]">
+            <Card key={habit.id} tone={tone} className="py-mp-26">
+              <div className="flex flex-col items-center gap-mp-10">
                 {/* L'icône prend la couleur de sa carte. text-[color:var(--tone)]
                     se lit : « couleur du texte = la variable --tone », celle
                     que la Card a posée juste au-dessus. Les icônes étant
                     dessinées en currentColor, elles suivent. */}
                 <Icon size={56} className="text-[color:var(--tone)]" />
-                <p className="text-[45px] leading-none font-semibold text-ink">
+                <p className="text-mp-45 leading-none font-semibold text-ink">
                   {habit.value}
                 </p>
-                <p className="text-[27px] font-light text-muted">
+                <p className="text-mp-27 font-light text-muted">
                   {habit.label}
                 </p>
               </div>

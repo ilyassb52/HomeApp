@@ -93,44 +93,29 @@ def test_un_profil_inconnu_renvoie_404(client):
 
 
 # --------------------------------------------------------------------------
-# 2. La limite de 3
+# 2. Pas de limite, et la suppression
+#
+# Il n'y a plus de maximum par jour : le widget du miroir et la page du
+# téléphone font défiler la liste quand elle est longue.
 # --------------------------------------------------------------------------
 
 
-def test_une_quatrieme_priorite_est_refusee(client, profile):
-    for text in ["Un", "Deux", "Trois"]:
+def test_on_peut_ajouter_plus_de_trois_priorites(client, profile):
+    texts = ["Un", "Deux", "Trois", "Quatre", "Cinq", "Six"]
+    for text in texts:
         _add(client, profile, text)
 
-    response = client.post(
-        "/goals", params=_params(profile), json={"text": "Quatre", "category": "work"}
-    )
-
-    assert response.status_code == 409
-    assert len(_list(client, profile)) == 3
+    assert _texts(client, profile) == texts
 
 
-def test_une_priorite_cochee_aujourd_hui_compte_encore(client, profile):
-    """Elle reste affichée, barrée : elle occupe toujours une place."""
+def test_supprimer_retire_la_priorite(client, profile):
     first = _add(client, profile, "Un")
     _add(client, profile, "Deux")
-    _add(client, profile, "Trois")
-    _check(client, profile, first["id"])
 
-    response = client.post(
-        "/goals", params=_params(profile), json={"text": "Quatre", "category": "work"}
-    )
-    assert response.status_code == 409
+    response = client.delete(f"/goals/{first['id']}", params=_params(profile))
 
-
-def test_supprimer_libere_une_place(client, profile):
-    first = _add(client, profile, "Un")
-    _add(client, profile, "Deux")
-    _add(client, profile, "Trois")
-
-    client.delete(f"/goals/{first['id']}", params=_params(profile))
-
-    _add(client, profile, "Quatre")
-    assert _texts(client, profile) == ["Deux", "Trois", "Quatre"]
+    assert response.status_code == 204
+    assert _texts(client, profile) == ["Deux"]
 
 
 # --------------------------------------------------------------------------
@@ -211,15 +196,13 @@ def test_une_priorite_reportee_puis_cochee_reste_affichee(
     assert _list(client, profile)[0]["done"] is True
 
 
-def test_les_reportees_comptent_dans_la_limite(client, profile, clock: FakeClock):
-    for text in ["Un", "Deux", "Trois"]:
-        _add(client, profile, text)
+def test_une_nouvelle_se_place_apres_les_reportees(client, profile, clock: FakeClock):
+    _add(client, profile, "Reportée")
     clock.next_day()
 
-    response = client.post(
-        "/goals", params=_params(profile), json={"text": "Quatre", "category": "work"}
-    )
-    assert response.status_code == 409
+    _add(client, profile, "Nouvelle")
+
+    assert _texts(client, profile) == ["Reportée", "Nouvelle"]
 
 
 # --------------------------------------------------------------------------

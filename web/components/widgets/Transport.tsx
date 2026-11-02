@@ -20,24 +20,24 @@ export default function Transport() {
       <div className="flex items-center gap-6">
         <Train size={72} className="text-cyan" />
 
-        <div className="flex flex-1 flex-col gap-[8px]">
-          <div className="flex items-center gap-[14px]">
+        <div className="flex flex-1 flex-col gap-mp-8">
+          <div className="flex items-center gap-mp-14">
             {/* Le badge de ligne : même pastille teintée que les catégories
                 de priorités, en version texte. */}
-            <span className="tone-chip rounded-[12px] px-[14px] py-[4px] text-[27px] font-semibold">
+            <span className="tone-chip rounded-mp-12 px-mp-14 py-mp-4 text-mp-27 font-semibold">
               {line}
             </span>
-            <p className="text-[34px] font-light text-ink">{direction}</p>
+            <p className="text-mp-34 font-light text-ink">{direction}</p>
           </div>
-          <p className="text-[30px] font-light text-muted">{advice}</p>
+          <p className="text-mp-30 font-light text-muted">{advice}</p>
         </div>
 
-        <div className="flex flex-col items-end gap-[4px]">
-          <p className="text-[45px] leading-none font-semibold text-neon-green">
+        <div className="flex flex-col items-end gap-mp-4">
+          <p className="text-mp-45 leading-none font-semibold text-neon-green">
             {nextDeparture}
           </p>
           {laterDepartures.length > 0 ? (
-            <p className="text-[30px] font-light text-muted">
+            <p className="text-mp-30 font-light text-muted">
               puis {laterDepartures.join(", ")}
             </p>
           ) : null}

@@ -28,7 +28,7 @@ export default function SectionLabel({
 }: SectionLabelProps) {
   return (
     <p
-      className={`text-[22px] font-semibold tracking-[3px] text-label uppercase ${className}`}
+      className={`text-mp-22 font-semibold tracking-mp-3 text-label uppercase ${className}`}
     >
       {children}
     </p>
