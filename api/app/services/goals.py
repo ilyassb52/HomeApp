@@ -55,3 +55,4 @@ def get_profile_goal(session: Session, profile_id: int, goal_id: int) -> Goal | 
     if goal is None or goal.profile_id != profile_id:
         return None
     return goal
+

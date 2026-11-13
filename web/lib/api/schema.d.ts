@@ -89,7 +89,7 @@ export interface components {
              * Category
              * @enum {string}
              */
-            category: "work" | "learning" | "sport";
+            category: "task" | "project" | "sport";
         };
         /**
          * GoalOrder
@@ -112,7 +112,7 @@ export interface components {
              * Category
              * @enum {string}
              */
-            category: "work" | "learning" | "sport";
+            category: "task" | "project" | "sport";
             /** Done */
             done: boolean;
         };
@@ -127,7 +127,7 @@ export interface components {
             /** Text */
             text?: string | null;
             /** Category */
-            category?: ("work" | "learning" | "sport") | null;
+            category?: ("task" | "project" | "sport") | null;
             /** Done */
             done?: boolean | null;
         };

@@ -18,7 +18,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Moon from "@/components/icons/Moon";
+import Emoji from "@/components/ui/Emoji";
 import { formatParisDate, formatParisTime } from "@/lib/time";
 
 export default function Clock({ showMoon = false }: { showMoon?: boolean }) {
@@ -41,7 +41,7 @@ export default function Clock({ showMoon = false }: { showMoon?: boolean }) {
   return (
     <div>
       <div className="flex items-center gap-6">
-        {showMoon ? <Moon size={84} className="text-moon" /> : null}
+        {showMoon ? <Emoji name="moon" size={84} /> : null}
 
         {/* 186 px, graisse 200 : les valeurs du tableau de typographie du
             brief. leading-none supprime l'interligne, qui à cette taille

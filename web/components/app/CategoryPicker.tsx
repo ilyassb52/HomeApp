@@ -9,6 +9,7 @@
  * ========================================================================== */
 
 import type { CSSProperties } from "react";
+import Emoji from "@/components/ui/Emoji";
 import { CATEGORY_LOOKS, PRIORITY_CATEGORIES } from "@/lib/priority-categories";
 import type { PriorityCategory } from "@/lib/types";
 
@@ -22,7 +23,7 @@ export default function CategoryPicker({
   return (
     <div role="radiogroup" aria-label="Catégorie" className="flex gap-2">
       {PRIORITY_CATEGORIES.map((category) => {
-        const { Icon, tone, label } = CATEGORY_LOOKS[category];
+        const { emoji, tone, label } = CATEGORY_LOOKS[category];
         const selected = category === value;
 
         return (
@@ -47,7 +48,7 @@ export default function CategoryPicker({
               } as CSSProperties
             }
           >
-            <Icon size={20} />
+            <Emoji name={emoji} size={20} />
             {label}
           </button>
         );

@@ -26,7 +26,7 @@ export default function AddPriorityForm({
   isSending: boolean;
 }) {
   const [text, setText] = useState("");
-  const [category, setCategory] = useState<PriorityCategory>("work");
+  const [category, setCategory] = useState<PriorityCategory>("task");
   const trimmedText = text.trim();
 
   async function submit(event: React.FormEvent) {

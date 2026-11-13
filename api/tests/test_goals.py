@@ -21,7 +21,7 @@ def _params(profile: Profile) -> dict[str, int]:
     return {"profile_id": profile.id}
 
 
-def _add(client: TestClient, profile: Profile, text: str, category="work") -> dict:
+def _add(client: TestClient, profile: Profile, text: str, category="task") -> dict:
     response = client.post(
         "/goals", params=_params(profile), json={"text": text, "category": category}
     )
@@ -52,10 +52,10 @@ def _check(client: TestClient, profile: Profile, goal_id: int) -> None:
 
 
 def test_une_priorite_ajoutee_apparait_dans_la_liste(client, profile):
-    created = _add(client, profile, "Finir le rapport", "work")
+    created = _add(client, profile, "Finir le rapport", "task")
 
     assert created["text"] == "Finir le rapport"
-    assert created["category"] == "work"
+    assert created["category"] == "task"
     assert created["done"] is False
     assert _list(client, profile) == [created]
 
@@ -75,7 +75,7 @@ def test_les_espaces_autour_du_texte_sont_retires(client, profile):
 
 def test_un_texte_vide_est_refuse(client, profile):
     response = client.post(
-        "/goals", params=_params(profile), json={"text": "   ", "category": "work"}
+        "/goals", params=_params(profile), json={"text": "   ", "category": "task"}
     )
     assert response.status_code == 422
 
@@ -134,17 +134,17 @@ def test_cocher_puis_decocher(client, profile):
 
 
 def test_modifier_le_texte_et_la_categorie(client, profile):
-    goal = _add(client, profile, "Lire", "work")
+    goal = _add(client, profile, "Lire", "task")
 
     response = client.patch(
         f"/goals/{goal['id']}",
         params=_params(profile),
-        json={"text": "Lire 20 pages", "category": "learning"},
+        json={"text": "Lire 20 pages", "category": "project"},
     )
 
     assert response.status_code == 200
     assert response.json()["text"] == "Lire 20 pages"
-    assert response.json()["category"] == "learning"
+    assert response.json()["category"] == "project"
     # Ce qui n'a pas été envoyé ne change pas.
     assert response.json()["done"] is False
 

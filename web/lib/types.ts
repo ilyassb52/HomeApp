@@ -16,7 +16,7 @@ import type { components } from "@/lib/api/schema";
  * 1. Les couleurs de thème
  *
  * Les cinq couleurs néon de la section 4, celles qu'un élément peut prendre :
- * une carte, une pastille de profil, une icône de catégorie.
+ * une carte, une pastille d'agenda, une icône de catégorie.
  *
  * Ce type vivait dans components/ui/Card.tsx tant que la carte était seule à
  * s'en servir. Les widgets et les profils en ont maintenant besoin : il
@@ -53,17 +53,6 @@ export interface Weather {
 export interface Profile {
   id: string;
   name: string;
-  tone: Tone;
-}
-
-/** Les deux alertes du matin et du soir (section 6). */
-export type AlertKind = "rain" | "trash";
-
-export interface Alert {
-  kind: AlertKind;
-  title: string;
-  /** Le conseil qui suit le titre : « Prends un parapluie ». */
-  advice: string;
 }
 
 /** Une priorité, telle que l'API la renvoie (GoalRead, api/app/schemas/goal.py).
@@ -73,48 +62,3 @@ export type Priority = components["schemas"]["GoalRead"];
 
 /** Les trois domaines d'une priorité, chacun avec sa couleur et son icône. */
 export type PriorityCategory = Priority["category"];
-
-export interface Transport {
-  /** Le numéro ou le nom de la ligne, affiché dans une pastille. */
-  line: string;
-  direction: string;
-  /** « Pars dans 4 min », calculé plus tard par l'API. */
-  advice: string;
-  /** Les deux prochains passages, le premier étant le plus proche. */
-  departures: string[];
-}
-
-/** Les trois séries suivies le matin (section 6). */
-export type HabitKind = "sport" | "reading" | "water";
-
-export interface Habit {
-  id: string;
-  kind: HabitKind;
-  /** La valeur mise en avant : « 12 jours », « 1,5 L ». */
-  value: string;
-  label: string;
-}
-
-/** Un rendez-vous du lendemain, affiché le soir. */
-export interface AgendaEvent {
-  id: string;
-  /** Déjà mis en forme : « 09:00 ». L'écran ne recalcule rien. */
-  time: string;
-  title: string;
-  /** La couleur de la pastille, pour distinguer les domaines d'un coup d'œil. */
-  tone: Tone;
-}
-
-export interface Menu {
-  /** Le plat prévu : « Gratin de courgettes ». */
-  dish: string;
-  /** Le rappel de préparation, facultatif : « Sortir la viande ce soir ». */
-  reminder?: string;
-}
-
-/** Le mot laissé par un membre du foyer sur l'écran du soir. */
-export interface Message {
-  /** L'identifiant d'un profil de lib/mock.ts : le nom en est déduit. */
-  fromProfileId: string;
-  text: string;
-}

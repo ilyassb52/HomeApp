@@ -61,7 +61,7 @@ export default function PrioritiesManager() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-4 pt-8">
       <header>
-        <p className="text-xs font-semibold tracking-[2px] text-label uppercase">
+        <p className="text-xl font-semibold tracking-[2px] text-label uppercase">
           Aujourd&apos;hui
         </p>
         <h1 className="text-3xl font-light">Mes priorités</h1>
@@ -94,7 +94,7 @@ export default function PrioritiesManager() {
               Aucune priorité aujourd&apos;hui.
             </p>
           ) : (
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-2">
               {priorities.map((priority, index) => (
                 <li key={priority.id}>
                   <PriorityRow

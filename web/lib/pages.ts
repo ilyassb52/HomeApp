@@ -1,7 +1,7 @@
 /* ==========================================================================
  * lib/pages.ts — retrouver une page du miroir à partir de l'URL
  *
- * /mirror?page=evening ouvre directement la page du soir, sans cliquer sur
+ * /mirror?page=morning ouvre directement la page du matin, sans cliquer sur
  * le bouton. Indispensable pour travailler sur une page précise, et pour
  * pouvoir plus tard ouvrir une page depuis le téléphone.
  *

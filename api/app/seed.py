@@ -44,14 +44,14 @@ def seed() -> None:
                 Goal(
                     profile_id=ilyass.id,
                     title="Finir la présentation client",
-                    category="work",
+                    category="task",
                     day=today,
                     position=0,
                 ),
                 Goal(
                     profile_id=ilyass.id,
                     title="Réviser le chapitre sur les réseaux",
-                    category="learning",
+                    category="project",
                     day=today,
                     position=1,
                 ),

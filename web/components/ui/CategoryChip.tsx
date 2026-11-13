@@ -1,8 +1,8 @@
 /* ==========================================================================
  * components/ui/CategoryChip.tsx — la pastille d'icône d'une catégorie
  *
- * Un carré arrondi au fond teinté, avec l'icône de la catégorie dans la même
- * couleur. Utilisée par le widget Priorities du miroir (grande) et par la
+ * Un carré arrondi au fond teinté de la couleur de la catégorie, avec son
+ * émoticône au centre. Utilisée par le widget Priorities du miroir (grande) et par la
  * page téléphone /app/priorities (petite) : seule la taille change.
  *
  * Elle pose elle-même la variable --tone, lue par la classe .tone-chip de
@@ -10,6 +10,7 @@
  * ========================================================================== */
 
 import type { CSSProperties } from "react";
+import Emoji from "@/components/ui/Emoji";
 import { mp } from "@/lib/mirror-pixels";
 import { CATEGORY_LOOKS } from "@/lib/priority-categories";
 import type { PriorityCategory } from "@/lib/types";
@@ -17,12 +18,15 @@ import type { PriorityCategory } from "@/lib/types";
 export default function CategoryChip({
   category,
   size,
+  loop,
 }: {
   category: PriorityCategory;
   /** Taille de l'icône en pixels miroir ; la pastille ajoute un quart autour. */
   size: number;
+  /** Nombre de lectures de l'émoticône (voir Emoji.tsx). Absent = à l'infini. */
+  loop?: boolean | number;
 }) {
-  const { Icon, tone } = CATEGORY_LOOKS[category];
+  const { emoji, tone } = CATEGORY_LOOKS[category];
 
   return (
     <span
@@ -37,7 +41,7 @@ export default function CategoryChip({
         } as CSSProperties
       }
     >
-      <Icon size={size} />
+      <Emoji name={emoji} size={size} loop={loop}/>
     </span>
   );
 }

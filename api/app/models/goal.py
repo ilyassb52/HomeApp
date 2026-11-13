@@ -34,7 +34,7 @@ from app.core.database import Base
 # (web/lib/types.ts, type PriorityCategory).
 # Le type Literal sert aux schémas de l'API ; le tuple, à la contrainte SQL.
 # get_args tire l'un de l'autre : la liste n'est écrite qu'une fois.
-GoalCategory = Literal["work", "learning", "sport"]
+GoalCategory = Literal["task", "project", "sport"]
 GOAL_CATEGORIES = get_args(GoalCategory)
 
 

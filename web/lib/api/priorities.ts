@@ -5,13 +5,13 @@
  * requête, sa mise en cache, la relecture régulière, et la conservation des
  * dernières données reçues si une relecture échoue.
  *
- * Les deux widgets du miroir (Priorities le matin, DailyReview le soir) et
- * la page téléphone /app/priorities appellent usePriorities() chacun de leur
- * côté : grâce au cache, une seule requête part pour tous.
+ * Le widget Priorities du miroir et la page téléphone /app/priorities
+ * appellent usePriorities() chacun de leur côté : grâce au cache, une seule
+ * requête part pour tous.
  *
  * Les modifications passent par des « mutations » (useMutation). Elles
  * vivent ici, et non dans la page téléphone, pour que le miroir tactile
- * puisse un jour cocher une priorité avec exactement le même hook.
+ * coche une priorité avec exactement le même hook.
  * ========================================================================== */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

@@ -37,7 +37,7 @@ type PriorityRowProps = {
 /* La Card du miroir est taillée pour 1080 px de large. Ces classes Tailwind
  * l'ajustent au téléphone : elles l'emportent sur celles de globals.css,
  * rangées dans une couche (@layer components) moins prioritaire. */
-const PHONE_CARD = "rounded-2xl p-3";
+const PHONE_CARD = "rounded-2xl p-1";
 
 export default function PriorityRow(props: PriorityRowProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -79,7 +79,7 @@ function ReadView({
         <CheckCircle done={priority.done} size={26} />
       </button>
 
-      <CategoryChip category={priority.category} size={20} />
+      <CategoryChip category={priority.category} size={30} />
 
       {/* min-w-0 autorise le texte à rétrécir sous sa largeur naturelle :
           sans lui, un long texte pousserait les boutons hors de l'écran.

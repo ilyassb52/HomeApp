@@ -6,51 +6,39 @@
  *
  * LE TABLEAU DE CORRESPONDANCE
  *
- * La section 10 du brief fixe quelle icône et quelle couleur vont avec quel
- * temps. Ce tableau est exporté : WeatherTomorrow et WeatherWeekend, aux
- * tâches 7 et 8, s'en serviront aussi — le brief dit « même logique ».
- *
- * Les classes de couleur y sont écrites EN TOUTES LETTRES, et non fabriquées
- * à partir du nom du ton. C'est obligatoire : Tailwind lit le code source
- * comme du texte avant l'exécution, donc "text-" + tone ne produirait rien.
+ * La section 10 du brief fixe quelle émoticône va avec quel temps. Ce
+ * tableau est exporté : WeatherTomorrow et WeatherWeekend s'en servent
+ * aussi — le brief dit « même logique ».
  * ========================================================================== */
 
-import Moon from "@/components/icons/Moon";
-import RainCloud from "@/components/icons/RainCloud";
-import Sun from "@/components/icons/Sun";
-import SunCloud from "@/components/icons/SunCloud";
-import type { IconProps } from "@/components/icons/IconBase";
+import Emoji from "@/components/ui/Emoji";
+import type { EmojiName } from "@/lib/emojis";
 import { mockWeather } from "@/lib/mock";
 import type { Weather as WeatherData, WeatherCondition } from "@/lib/types";
 
-type WeatherLook = {
-  Icon: (props: IconProps) => React.ReactElement;
-  className: string;
-};
-
-export const WEATHER_LOOKS: Record<WeatherCondition, WeatherLook> = {
-  sunny: { Icon: Sun, className: "text-amber" },
-  cloudy: { Icon: SunCloud, className: "text-cloud" },
-  rainy: { Icon: RainCloud, className: "text-cyan" },
-  night: { Icon: Moon, className: "text-moon" },
+export const WEATHER_EMOJIS: Record<WeatherCondition, EmojiName> = {
+  sunny: "sun",
+  cloudy: "sunCloud",
+  rainy: "rainCloud",
+  night: "moon",
 };
 
 /* Repli imposé par la section 10 : une condition inconnue — venue plus tard
- * d'une API — ne doit pas vider l'écran. On dessine un ciel nuageux et on le
+ * d'une API — ne doit pas vider l'écran. On affiche un ciel nuageux et on le
  * signale. */
-const FALLBACK_LOOK = WEATHER_LOOKS.cloudy;
+const FALLBACK_EMOJI: EmojiName = "sunCloud";
 
-export function getWeatherLook(condition: WeatherCondition): WeatherLook {
-  const look = WEATHER_LOOKS[condition];
+export function getWeatherEmoji(condition: WeatherCondition): EmojiName {
+  const emoji = WEATHER_EMOJIS[condition];
 
-  if (!look) {
+  if (!emoji) {
     console.warn(
-      `[weather] Condition inconnue « ${condition} » : l'icône nuageuse est utilisée.`,
+      `[weather] Condition inconnue « ${condition} » : l'émoticône nuageuse est utilisée.`,
     );
-    return FALLBACK_LOOK;
+    return FALLBACK_EMOJI;
   }
 
-  return look;
+  return emoji;
 }
 
 /* --------------------------------------------------------------------------
@@ -66,11 +54,9 @@ export function WeatherReading({
   iconSize?: number;
   temperatureClassName?: string;
 }) {
-  const { Icon, className } = getWeatherLook(data.condition);
-
   return (
     <div className="flex items-center gap-5">
-      <Icon size={iconSize} className={className} />
+      <Emoji name={getWeatherEmoji(data.condition)} size={iconSize} />
       <p
         className={`${temperatureClassName} leading-none font-extralight text-ink`}
       >

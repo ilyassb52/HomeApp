@@ -78,7 +78,7 @@ function MirrorScreen() {
   const isBrowser = useIsBrowser();
   const searchParams = useSearchParams();
 
-  /* La page affichée, par sa position dans MIRROR_PAGES. ?page=evening
+  /* La page affichée, par sa position dans MIRROR_PAGES. ?page=morning
    * choisit celle du départ ; le bouton fait ensuite avancer la position. */
   const [pageIndex, setPageIndex] = useState(() =>
     findPageIndex(
@@ -103,11 +103,14 @@ function MirrorScreen() {
   return (
     <MirrorFrame
       calibrate={calibrate}
+      /* Avec une seule page, le bouton ne mènerait nulle part : on le cache. */
       overlay={
-        <PageSwitcher
-          nextLabel={MIRROR_PAGES[nextIndex].label}
-          onNext={() => setPageIndex(nextIndex)}
-        />
+        MIRROR_PAGES.length > 1 && (
+          <PageSwitcher
+            nextLabel={MIRROR_PAGES[nextIndex].label}
+            onNext={() => setPageIndex(nextIndex)}
+          />
+        )
       }
     >
       <Component />
