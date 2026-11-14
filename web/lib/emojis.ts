@@ -49,7 +49,14 @@ export const EMOJIS = {
   cooking: "1f373", //          🍳 menu du soir
   sparkles: "2728", //          ✨ bilan de la journée
   heart: "2764_fe0f", //        ❤️ petit message
-  sunRise: "1f305"
+  cart: "1f6d2", //             🛒 liste de courses
+  sunRise: "1f305",
+
+  /* --- Agenda ---------------------------------------------------------- */
+  /* Pas de calendrier animé chez Google (📅 et 🗓️ n'existent pas) : le
+   * titre de l'agenda utilise une image fixe, public/emoji/calendar.svg
+   * (voir components/widgets/Agenda.tsx). */
+  cake: "1f382", //             🎂 anniversaire (date fixe chaque année)
 } as const;
 
 /** Le nom d'une émoticône du catalogue : "sun", "moon", "heart"… */

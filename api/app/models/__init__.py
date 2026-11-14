@@ -4,7 +4,18 @@ Tous les modèles, importés ici pour deux raisons : écrire
 trouver tous en important ce seul module.
 """
 
+from app.models.event import EVENT_KINDS, Event, EventKind
 from app.models.goal import GOAL_CATEGORIES, Goal, GoalCategory
 from app.models.profile import Profile
+from app.models.shopping_item import ShoppingItem
 
-__all__ = ["GOAL_CATEGORIES", "Goal", "GoalCategory", "Profile"]
+__all__ = [
+    "EVENT_KINDS",
+    "Event",
+    "EventKind",
+    "GOAL_CATEGORIES",
+    "Goal",
+    "GoalCategory",
+    "Profile",
+    "ShoppingItem",
+]

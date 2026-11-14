@@ -38,6 +38,11 @@ export function formatParisTime(date: Date): string {
  *  Le français n'écrit pas les jours avec une majuscule, mais le brief
  *  demande cette forme à l'écran. */
 export function formatParisDate(date: Date): string {
-  const text = DATE_FORMATTER.format(date);
+  return capitalize(DATE_FORMATTER.format(date));
+}
+
+/** « lundi » → « Lundi ». Partagé avec lib/calendar.ts, qui écrit aussi
+ *  des jours et des mois avec une majuscule. */
+export function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }

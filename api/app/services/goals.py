@@ -8,11 +8,12 @@ résultats en réponses.
 ==========================================================================
 """
 
-from datetime import datetime, time
+from datetime import datetime
 
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from app.core.clock import start_of_day
 from app.models import Goal
 
 
@@ -29,8 +30,7 @@ def list_visible_goals(session: Session, profile_id: int, now: datetime) -> list
     cochée hier disparaît.
     """
     today = now.date()
-    # Minuit ce matin, à Paris. now porte déjà le fuseau : on le recopie.
-    start_of_today = datetime.combine(today, time.min, tzinfo=now.tzinfo)
+    start_of_today = start_of_day(now)
 
     statement = (
         select(Goal)

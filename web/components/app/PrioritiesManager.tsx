@@ -14,6 +14,8 @@
 
 import { useState } from "react";
 import AddPriorityForm from "@/components/app/AddPriorityForm";
+import ErrorBanner from "@/components/app/ErrorBanner";
+import { LoadFailed, LoadingRows } from "@/components/app/LoadStates";
 import PriorityRow from "@/components/app/PriorityRow";
 import {
   useAddGoal,
@@ -24,9 +26,6 @@ import {
 } from "@/lib/api/priorities";
 import type { PriorityCategory } from "@/lib/types";
 
-/* --------------------------------------------------------------------------
- * 1. Le composant principal
- * -------------------------------------------------------------------------- */
 export default function PrioritiesManager() {
   const { data: priorities, isError, refetch } = usePriorities();
   const updateGoal = useUpdateGoal();
@@ -67,16 +66,7 @@ export default function PrioritiesManager() {
         <h1 className="text-3xl font-light">Mes priorités</h1>
       </header>
 
-      {errorMessage !== null ? (
-        /* role="alert" fait lire le message aussitôt par un lecteur
-         * d'écran, sans qu'il ait à le chercher. */
-        <p
-          role="alert"
-          className="rounded-xl border border-coral/40 bg-coral/10 px-4 py-3 text-sm text-coral"
-        >
-          {errorMessage}
-        </p>
-      ) : null}
+      <ErrorBanner message={errorMessage} />
 
       {/* Tant que la liste n'est jamais arrivée : chargement, ou échec si
           l'API ne répond pas. Une fois reçue, elle reste affichée même si
@@ -150,37 +140,4 @@ function swapIds(
   const ids = priorities.map((priority) => priority.id);
   [ids[from], ids[to]] = [ids[to], ids[from]];
   return ids;
-}
-
-/* --------------------------------------------------------------------------
- * 2. Les états d'attente et d'échec
- * -------------------------------------------------------------------------- */
-
-/** Trois barres grises qui pulsent, à la place des lignes à venir. */
-function LoadingRows() {
-  return (
-    <div className="flex flex-col gap-3" aria-label="Chargement">
-      {[0, 1, 2].map((key) => (
-        <div
-          key={key}
-          className="h-[68px] animate-pulse rounded-2xl bg-ink/5"
-        />
-      ))}
-    </div>
-  );
-}
-
-function LoadFailed({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div className="flex flex-col items-center gap-3 text-center">
-      <p className="font-light text-muted">Impossible de joindre le serveur.</p>
-      <button
-        type="button"
-        onClick={onRetry}
-        className="min-h-11 rounded-xl border border-ink/20 px-5"
-      >
-        Réessayer
-      </button>
-    </div>
-  );
 }

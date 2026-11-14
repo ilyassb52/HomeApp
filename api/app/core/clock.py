@@ -8,10 +8,13 @@ POURQUOI ? Pour les tests. Le report des priorités dépend du jour : pour
 vérifier qu'une priorité d'hier remonte aujourd'hui, un test doit pouvoir
 « avancer l'horloge » d'un jour. Il remplace alors get_now par sa propre
 horloge (voir tests/conftest.py), et aucune route n'a à le savoir.
+
+start_of_day sert aux listes qui gardent visible « ce qui a été coché
+aujourd'hui » : les priorités et les courses.
 ==========================================================================
 """
 
-from datetime import datetime
+from datetime import datetime, time
 
 from app.core.config import settings
 
@@ -22,3 +25,12 @@ def get_now() -> datetime:
     now.date() donne donc le jour à Paris, et pas le jour en UTC.
     """
     return datetime.now(settings.tz)
+
+
+def start_of_day(now: datetime) -> datetime:
+    """Minuit ce matin, dans le fuseau de now.
+
+    now porte déjà le fuseau du foyer (voir get_now) : on le recopie.
+    Une chose cochée après cet instant l'a été aujourd'hui.
+    """
+    return datetime.combine(now.date(), time.min, tzinfo=now.tzinfo)

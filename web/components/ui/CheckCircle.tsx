@@ -1,8 +1,9 @@
 /* ==========================================================================
- * components/ui/CheckCircle.tsx — le cercle à cocher d'une priorité
+ * components/ui/CheckCircle.tsx — le cercle à cocher d'une priorité ou
+ * d'un article de courses
  *
  * Vide quand la priorité reste à faire, rempli d'un point de couleur quand
- * elle est faite. Utilisé par le widget du miroir et par la page téléphone.
+ * elle est faite. Utilisé par les widgets du miroir et par les pages téléphone.
  *
  * Il ne choisit pas sa couleur : il lit la variable --tone posée par la
  * Card qui l'entoure, comme la classe .tone-dot de globals.css.

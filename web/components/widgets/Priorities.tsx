@@ -24,13 +24,13 @@
 
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
 import Card from "@/components/ui/Card";
 import CategoryChip from "@/components/ui/CategoryChip";
 import CheckCircle from "@/components/ui/CheckCircle";
 import SectionLabel from "@/components/ui/SectionLabel";
 import { usePriorities, useUpdateGoal } from "@/lib/api/priorities";
 import { CATEGORY_LOOKS } from "@/lib/priority-categories";
+import { useScrollFade } from "@/lib/use-scroll-fade";
 
 /* --------------------------------------------------------------------------
  * 1. Réglages
@@ -51,39 +51,10 @@ export default function Priorities() {
 
   const updateGoal = useUpdateGoal();
 
-  /* ------------------------------------------------------------------------
-   * Le fondu du bas : seulement s'il reste quelque chose à voir en dessous
-   *
-   * Le fondu (mask-image) est posé sur la boîte qui défile, pas sur son
-   * contenu : il rend toujours transparents les 15 % du bas du cadre. Si on
-   * le laissait tout le temps, il cacherait la dernière carte une fois
-   * arrivé au bout — ou dès le départ, quand toutes les cartes tiennent.
-   *
-   * Plutôt que de compter les cartes (une priorité longue prend deux lignes,
-   * et la hauteur de la liste peut changer), on MESURE la liste : atEnd vaut
-   * vrai quand on voit déjà son bas. Le fondu ne s'affiche que sinon.
-   *
-   * Ces hooks sont déclarés avant le « return null » plus bas : React exige
-   * qu'ils soient appelés à chaque rendu, dans le même ordre.
-   * ------------------------------------------------------------------------ */
-  const listRef = useRef<HTMLDivElement>(null);
-  const [atEnd, setAtEnd] = useState(false);
-
-  function checkAtEnd() {
-    const list = listRef.current;
-    if (!list) return;
-    /* scrollTop : ce qu'on a déjà fait défiler ; clientHeight : la hauteur
-     * visible ; scrollHeight : la hauteur totale du contenu. Le « - 1 »
-     * absorbe les arrondis de pixels (les tailles miroir sont des calculs
-     * avec --mp, rarement des nombres entiers). Si tout tient sans défiler,
-     * les deux côtés sont égaux : atEnd vaut vrai, pas de fondu. */
-    setAtEnd(list.scrollTop + list.clientHeight >= list.scrollHeight - 1);
-  }
-
-  /* On mesure à l'arrivée des priorités et à chaque nouvelle liste (ajout,
-   * suppression). useLayoutEffect mesure avant que l'écran soit dessiné :
-   * le fondu n'apparaît pas une fraction de seconde pour rien. */
-  useLayoutEffect(checkAtEnd, [data]);
+  /* Le fondu du bas, seulement s'il reste des cartes cachées en dessous
+   * (lib/use-scroll-fade.ts). Appelé avant le « return null » plus bas :
+   * React exige que les hooks soient appelés à chaque rendu. */
+  const { listRef, onScroll, fadeClass } = useScrollFade(data);
 
   if (priorities.length === 0) {
     return null;
@@ -109,10 +80,8 @@ export default function Priorities() {
           cartes cachées en dessous : on remesure à chaque défilement. */}
       <div
         ref={listRef}
-        onScroll={checkAtEnd}
-        className={`flex max-h-mp-550 flex-col gap-mp-18 overflow-y-auto overscroll-contain ${
-          atEnd ? "" : "scroll-fade"
-        }`}
+        onScroll={onScroll}
+        className={`flex max-h-mp-550 flex-col gap-mp-18 overflow-y-auto overscroll-contain ${fadeClass}`}
       >
         {priorities.map((priority) => {
           const { tone } = CATEGORY_LOOKS[priority.category];

@@ -62,3 +62,18 @@ export type Priority = components["schemas"]["GoalRead"];
 
 /** Les trois domaines d'une priorité, chacun avec sa couleur et son icône. */
 export type PriorityCategory = Priority["category"];
+
+/** Un article de la liste de courses du foyer, tel que l'API le renvoie
+ *  (ShoppingItemRead, api/app/schemas/shopping.py). Généré, comme Priority. */
+export type ShoppingItem = components["schemas"]["ShoppingItemRead"];
+
+/** Un événement de l'agenda du foyer, tel que l'API le renvoie (EventRead,
+ *  api/app/schemas/event.py). Dans une liste, « day » est le jour où il
+ *  tombe : pour un anniversaire, la date de cette année. Généré. */
+export type CalendarEvent = components["schemas"]["EventRead"];
+
+/** Ce que le téléphone envoie pour ajouter ou modifier un événement. */
+export type CalendarEventDraft = components["schemas"]["EventWrite"];
+
+/** Un membre du foyer tel que l'API le renvoie : id, prénom, couleur. */
+export type Member = components["schemas"]["MemberRead"];

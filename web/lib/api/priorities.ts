@@ -16,6 +16,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, MIRROR_PROFILE_ID } from "@/lib/api/client";
+import { throwIfError, useOptimisticMutation } from "@/lib/api/optimistic";
 import type { Priority, PriorityCategory } from "@/lib/types";
 
 /* --------------------------------------------------------------------------
@@ -38,15 +39,6 @@ export const prioritiesQueryKey = ["goals", MIRROR_PROFILE_ID] as const;
  * jeton d'authentification (voir client.ts). */
 const profileQuery = { query: { profile_id: MIRROR_PROFILE_ID } };
 
-/* openapi-fetch ne lève pas d'erreur sur un 404 ou un 500 : il la range dans
- * « error ». On la relance pour que TanStack Query sache que la requête a
- * échoué — il garde alors les données précédentes, ou annule la mutation. */
-function throwIfError(error: unknown, message: string) {
-  if (error !== undefined) {
-    throw new Error(message);
-  }
-}
-
 /* --------------------------------------------------------------------------
  * 2. Lire
  * -------------------------------------------------------------------------- */
@@ -67,52 +59,15 @@ export function usePriorities() {
 /* --------------------------------------------------------------------------
  * 3. Le motif « optimiste »
  *
- * Attendre la réponse de l'API avant de cocher la case donnerait une
- * interface molle. On fait donc l'inverse : on modifie tout de suite la
- * liste en cache, comme si l'API avait déjà dit oui, puis :
- *
- *   - si l'API refuse, on remet la copie gardée de côté ;
- *   - dans tous les cas, on relit la liste pour repartir de la vérité.
- *
- * Trois mutations sur quatre suivent ce motif : il est écrit une fois ici.
- * Chacune ne fournit que deux choses : l'appel à l'API (send) et la façon
- * de modifier la liste en cache (applyToCache).
+ * Trois mutations sur quatre modifient la liste en cache AVANT la réponse
+ * de l'API (voir lib/api/optimistic.ts). Ce raccourci leur donne la bonne
+ * clé et le bon type d'élément.
  * -------------------------------------------------------------------------- */
 function useOptimisticGoalMutation<Variables>(
   send: (variables: Variables) => Promise<void>,
   applyToCache: (goals: Priority[], variables: Variables) => Priority[],
 ) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: send,
-
-    onMutate: async (variables: Variables) => {
-      /* Une relecture partie juste avant écraserait notre modification avec
-       * l'ancienne liste en arrivant : on l'annule. */
-      await queryClient.cancelQueries({ queryKey: prioritiesQueryKey });
-
-      const previous = queryClient.getQueryData<Priority[]>(prioritiesQueryKey);
-      if (previous !== undefined) {
-        queryClient.setQueryData(
-          prioritiesQueryKey,
-          applyToCache(previous, variables),
-        );
-      }
-      /* Ce qui est renvoyé ici est transmis à onError, en troisième
-       * argument : c'est notre copie de secours. */
-      return { previous };
-    },
-
-    onError: (_error, _variables, saved) => {
-      if (saved?.previous !== undefined) {
-        queryClient.setQueryData(prioritiesQueryKey, saved.previous);
-      }
-    },
-
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: prioritiesQueryKey }),
-  });
+  return useOptimisticMutation(prioritiesQueryKey, send, applyToCache);
 }
 
 /* --------------------------------------------------------------------------
