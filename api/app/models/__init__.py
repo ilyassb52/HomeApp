@@ -8,6 +8,7 @@ from app.models.event import EVENT_KINDS, Event, EventKind
 from app.models.goal import GOAL_CATEGORIES, Goal, GoalCategory
 from app.models.profile import Profile
 from app.models.shopping_item import ShoppingItem
+from app.models.workout import WorkoutExercise, WorkoutSession, WorkoutSet
 
 __all__ = [
     "EVENT_KINDS",
@@ -18,4 +19,7 @@ __all__ = [
     "GoalCategory",
     "Profile",
     "ShoppingItem",
+    "WorkoutExercise",
+    "WorkoutSession",
+    "WorkoutSet",
 ]

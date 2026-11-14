@@ -163,6 +163,112 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Period */
+        get: operations["list_period_workouts_get"];
+        put?: never;
+        /** Create Workout */
+        post: operations["create_workout_workouts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workouts/exercise-names": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Exercise Names */
+        get: operations["list_exercise_names_workouts_exercise_names_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workouts/{workout_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Workout */
+        get: operations["read_workout_workouts__workout_id__get"];
+        /** Update Workout */
+        put: operations["update_workout_workouts__workout_id__put"];
+        post?: never;
+        /** Delete Workout */
+        delete: operations["delete_workout_workouts__workout_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workouts/{workout_id}/previous": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Previous Exercise */
+        get: operations["read_previous_exercise_workouts__workout_id__previous_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workouts/{workout_id}/exercises": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Exercise */
+        post: operations["add_exercise_workouts__workout_id__exercises_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workouts/{workout_id}/exercises/{exercise_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update Exercise */
+        put: operations["update_exercise_workouts__workout_id__exercises__exercise_id__put"];
+        post?: never;
+        /** Delete Exercise */
+        delete: operations["delete_exercise_workouts__workout_id__exercises__exercise_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -228,6 +334,25 @@ export interface components {
             start_time?: string | null;
             /** Profile Id */
             profile_id?: number | null;
+        };
+        /** ExerciseRead */
+        ExerciseRead: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Sets */
+            sets: components["schemas"]["SetRead"][];
+        };
+        /**
+         * ExerciseWrite
+         * @description Un exercice et toutes ses séries, pour l'ajouter ou le modifier.
+         */
+        ExerciseWrite: {
+            /** Name */
+            name: string;
+            /** Sets */
+            sets: components["schemas"]["SetWrite"][];
         };
         /**
          * GoalCreate
@@ -300,6 +425,34 @@ export interface components {
             tone: "amber" | "cyan" | "magenta" | "neon-green" | "coral";
         };
         /**
+         * PreviousExerciseRead
+         * @description « La dernière fois » : le jour et les séries de la dernière fois
+         *     qu'on a fait cet exercice, pour s'en souvenir à la salle.
+         */
+        PreviousExerciseRead: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Sets */
+            sets: components["schemas"]["SetRead"][];
+        };
+        /** SetRead */
+        SetRead: {
+            /** Reps */
+            reps: number;
+            /** Weight Kg */
+            weight_kg: number | null;
+        };
+        /** SetWrite */
+        SetWrite: {
+            /** Reps */
+            reps: number;
+            /** Weight Kg */
+            weight_kg?: number | string | null;
+        };
+        /**
          * ShoppingItemCreate
          * @description Ce que le téléphone envoie pour ajouter un article.
          */
@@ -339,6 +492,37 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /**
+         * WorkoutRead
+         * @description Une séance telle que le front la reçoit.
+         */
+        WorkoutRead: {
+            /** Id */
+            id: number;
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Note */
+            note: string | null;
+            /** Exercises */
+            exercises: components["schemas"]["ExerciseRead"][];
+        };
+        /**
+         * WorkoutWrite
+         * @description Une séance sans ses exercices : pour l'ouvrir, ou changer sa date et
+         *     sa note. Les exercices s'ajoutent ensuite un par un.
+         */
+        WorkoutWrite: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Note */
+            note?: string | null;
         };
     };
     responses: never;
@@ -805,6 +989,359 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MemberRead"][];
+                };
+            };
+        };
+    };
+    list_period_workouts_get: {
+        parameters: {
+            query: {
+                start: string;
+                end: string;
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_workout_workouts_post: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkoutWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_exercise_names_workouts_exercise_names_get: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_workout_workouts__workout_id__get: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_workout_workouts__workout_id__put: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkoutWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_workout_workouts__workout_id__delete: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_previous_exercise_workouts__workout_id__previous_get: {
+        parameters: {
+            query: {
+                name: string;
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreviousExerciseRead"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_exercise_workouts__workout_id__exercises_post: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExerciseWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_exercise_workouts__workout_id__exercises__exercise_id__put: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+                exercise_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExerciseWrite"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_exercise_workouts__workout_id__exercises__exercise_id__delete: {
+        parameters: {
+            query: {
+                /** @description Provisoire, avant le JWT */
+                profile_id: number;
+            };
+            header?: never;
+            path: {
+                workout_id: number;
+                exercise_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkoutRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

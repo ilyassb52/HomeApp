@@ -77,3 +77,21 @@ export type CalendarEventDraft = components["schemas"]["EventWrite"];
 
 /** Un membre du foyer tel que l'API le renvoie : id, prénom, couleur. */
 export type Member = components["schemas"]["MemberRead"];
+
+/** Une séance d'entraînement telle que l'API la renvoie (WorkoutRead,
+ *  api/app/schemas/workout.py) : un jour, une note, des exercices, et dans
+ *  chaque exercice ses séries (reps, poids). Généré, comme Priority. */
+export type Workout = components["schemas"]["WorkoutRead"];
+
+/** Un exercice d'une séance, avec ses séries. */
+export type WorkoutExercise = Workout["exercises"][number];
+
+/** Une série : un nombre de répétitions et un poids (null = poids du corps). */
+export type WorkoutSet = WorkoutExercise["sets"][number];
+
+/** Ce que le téléphone envoie pour ouvrir une séance, ou changer son jour
+ *  et sa note. Les exercices s'ajoutent ensuite un par un. */
+export type WorkoutDraft = components["schemas"]["WorkoutWrite"];
+
+/** Ce que le téléphone envoie pour ajouter ou modifier un exercice. */
+export type ExerciseDraft = components["schemas"]["ExerciseWrite"];

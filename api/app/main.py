@@ -14,13 +14,14 @@ from fastapi import FastAPI
 from sqlalchemy import text
 
 from app.core.database import engine
-from app.routers import events, goals, profiles, shopping
+from app.routers import events, goals, profiles, shopping, workouts
 
 app = FastAPI(title="Magic Mirror API")
 app.include_router(goals.router)
 app.include_router(shopping.router)
 app.include_router(events.router)
 app.include_router(profiles.router)
+app.include_router(workouts.router)
 
 
 @app.get("/health")

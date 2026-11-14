@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     # Paris, il est encore 23 h 30 la veille en UTC.
     timezone: str = "Europe/Paris"
 
+    latitude: float = 48.85
+    longitude:float = 2.25
+
     @property
     def tz(self) -> ZoneInfo:
         return ZoneInfo(self.timezone)
